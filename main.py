@@ -88,8 +88,6 @@ def set_rp(info, length):
         if length['speed'] == 0:
             RPC.update(state=state_info,
                        details=str(info['showtitle']),
-                       start=start_time,
-                       end=end_time,
                        large_image=image_url,
                        large_text='Watching a TV Show on Kodi',
                        small_image='pause',
@@ -114,8 +112,6 @@ def set_rp(info, length):
         if length['speed'] == 0:
             RPC.update(state=title,
                        details=str(info['label']),
-                       start=start_time,
-                       end=end_time,
                        large_image=image_url,
                        large_text='Watching Live TV on Kodi',
                        small_image='pause',
