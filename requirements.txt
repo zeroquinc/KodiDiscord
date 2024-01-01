@@ -1,0 +1,3 @@
+pypresence==4.3.0
+python-dotenv==1.0.0
+Requests==2.31.0
