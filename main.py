@@ -17,6 +17,7 @@ url = f"http://localhost:{port}/jsonrpc"
 infourl = "?request={%20%22jsonrpc%22:%20%222.0%22,%20%22method%22:%20%22Player.GetItem%22,%20%22params%22:%20{%20%22properties%22:%20[%20%22title%22,%20%22season%22,%20%22episode%22,%20%22duration%22,%20%22showtitle%22,%20%22tvshowid%22],%20%22playerid%22:%201%20},%20%22id%22:%20%22VideoGetItem%22%20}"
 lengthurl = "?request={%22jsonrpc%22:%222.0%22,%22method%22:%22Player.GetProperties%22,%22params%22:{%22playerid%22:1,%22properties%22:[%22speed%22,%22time%22,%22totaltime%22]},%22id%22:%221%22}"
 result = None
+tmdb_cache = {}
 
 # Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -51,10 +52,17 @@ def set_rp(info, length):
     image_url = "https://i.imgur.com/QONOI11.png"
 
     if tmdb_id:
-        tmdb_url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}"
-        tmdb_response = requests.get(tmdb_url).json()
-        if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
-            image_url = f"https://image.tmdb.org/t/p/w500{tmdb_response['poster_path']}"
+        # Check if the TMDB ID is in the cache
+        if tmdb_id in tmdb_cache:
+            image_url = tmdb_cache[tmdb_id]
+        else:
+            # If not in the cache, make a request to the TMDB API
+            tmdb_url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}"
+            tmdb_response = requests.get(tmdb_url).json()
+            if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
+                image_url = f"https://image.tmdb.org/t/p/w500{tmdb_response['poster_path']}"
+                # Store the image URL in the cache
+                tmdb_cache[tmdb_id] = image_url
 
     if info['type'] == 'movie':
         if length['speed'] == 0:
