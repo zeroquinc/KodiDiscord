@@ -10,6 +10,8 @@ def main():
             while True:
                 info = fetch_info(session)
                 length = fetch_length(session)
+                logging.debug(f"Fetched info: {info}")
+                logging.debug(f"Fetched length: {length}")
                 if info is not None and length is not None:
                     if info != last_info or length != last_length:
                         update_rp(info, length)
