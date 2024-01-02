@@ -192,20 +192,21 @@ def get_title(info):
     return title
 
 try:
-    while True:
-        try:
-            info = requests.get(url+infourl).json()
-            length = requests.get(url+lengthurl).json()
+    with requests.Session() as session:
+        while True:
             try:
-                set_rp(info, length)
-            except PipeClosed:
-                print("Connection to Discord lost. Attempting to reconnect...")
-                RPC.connect()
-        except requests.exceptions.RequestException as e:
-            print(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
-            time.sleep(60)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            time.sleep(60)
+                info = session.get(url+infourl).json()
+                length = session.get(url+lengthurl).json()
+                try:
+                    set_rp(info, length)
+                except PipeClosed:
+                    print("Connection to Discord lost. Attempting to reconnect...")
+                    RPC.connect()
+            except requests.exceptions.RequestException as e:
+                print(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
+                time.sleep(60)
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                time.sleep(60)
 except KeyboardInterrupt:
     print("Program interrupted by user. Exiting...")
