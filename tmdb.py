@@ -12,7 +12,9 @@ def get_tmdb_id(info):
         tv_show_id = info['tvshowid']
         tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
         tv_show_response = requests.get(tv_show_url).json()
-        tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
+        # Check if 'result' key exists in the response
+        if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'tmdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
+            tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
     elif info['type'] == 'movie':
         # If the media type is a movie, fetch the TMDB ID from the movie details
         tmdb_id = info['uniqueid']['tmdb']
