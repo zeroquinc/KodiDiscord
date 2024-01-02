@@ -71,7 +71,7 @@ def set_rp(info, length):
 
     if info['type'] == 'movie':
         if length['speed'] == 0:
-            print(f"Updated RPC - Paused movie: {info['title']}")
+            print(f"Updated RPC - Paused movie \n{info['title']}")
             RPC.update(details=str(info['title']),
                        state="Paused...",
                        large_image=image_url,
@@ -79,7 +79,7 @@ def set_rp(info, length):
                        small_image='pause',
                        small_text='Paused')
         else:
-            print(f"Updated RPC - Playing movie: {info['title']}")
+            print(f"Updated RPC - Playing movie \n{info['title']}")
             RPC.update(details=str(info['title']),
                        start=start_time,
                        end=end_time,
@@ -95,7 +95,7 @@ def set_rp(info, length):
         episode_number = str(info['episode']).zfill(2)
         state_info = f'S{season_number}E{episode_number}: {info["title"]}'
         if length['speed'] == 0:
-            print(f"Updated RPC - Paused episode: {info['title']}")
+            print(f"Updated RPC - Paused episode \n{info['showtitle']} {state_info}")
             RPC.update(state=state_info,
                        details=str(info['showtitle']),
                        large_image=image_url,
@@ -103,7 +103,7 @@ def set_rp(info, length):
                        small_image='pause',
                        small_text='Paused')
         else:
-            print(f"Updated RPC - Playing episode: {info['title']}")
+            print(f"Updated RPC - Playing episode \n{info['showtitle']} {state_info}")
             RPC.update(state=state_info,
                        details=str(info['showtitle']),
                        start=start_time,
@@ -123,7 +123,7 @@ def set_rp(info, length):
         except KeyError:
             title = 'Not available'
         if length['speed'] == 0:
-            print(f"Updated RPC - Paused channel: {info['label']}")
+            print(f"Updated RPC - Paused channel \n{info['label']}")
             RPC.update(state=title,
                        details=str(info['label']),
                        large_image=image_url,
@@ -131,7 +131,7 @@ def set_rp(info, length):
                        small_image='pause',
                        small_text='Paused')
         else:
-            print(f"Updated RPC - Playing channel: {info['label']}")
+            print(f"Updated RPC - Playing channel \n{info['label']}")
             RPC.update(state=title,
                        details=str(info['label']),
                        start=start_time,
