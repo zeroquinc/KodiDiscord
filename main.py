@@ -112,8 +112,8 @@ def set_rp(info, length):
         previous_info = info
         previous_speed = length['speed']
 
-    if info['type'] == 'unknown':
-        print("Cleared RPC")
+    if info['type'] == 'unknown' and length['speed'] == 0:
+        print("Nothing is playing. Clearing RPC...")
         RPC.clear()
 
     time.sleep(15)
