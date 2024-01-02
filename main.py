@@ -179,8 +179,11 @@ try:
             except PipeClosed:
                 print("Connection to Discord lost. Attempting to reconnect...")
                 RPC.connect()
-        except requests.exceptions.RequestException:
-            print("Cant connect to Kodi web interface. Are you sure its running? Is the web interface on?")
+        except requests.exceptions.RequestException as e:
+            print(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
+            time.sleep(60)
+        except Exception as e:
+            print(f"An error occurred: {e}")
             time.sleep(60)
 except KeyboardInterrupt:
     print("Program interrupted by user. Exiting...")
