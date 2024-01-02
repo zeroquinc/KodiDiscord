@@ -38,36 +38,12 @@ def set_rp(info, length):
     length = length['result']
     if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before
         return
-    start_time = (datetime.now() - timedelta(hours=length["time"]['hours'], minutes=length["time"]['minutes'], seconds=length["time"]['seconds']))
-    end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
-    start_time = start_time.timestamp()
+    start_time = calculate_start_time(length)
+    end_time = calculate_end_time(start_time, length)
     
-    tmdb_id = None
-    if info['type'] == 'episode':
-        tv_show_id = info['tvshowid']
-        tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
-        tv_show_response = requests.get(tv_show_url).json()
-        tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
-        media_type = 'tv'
-    elif info['type'] == 'movie':
-        tmdb_id = info['uniqueid']['tmdb']
-        media_type = 'movie'
-
-    # Default stock image URL
-    image_url = "https://i.imgur.com/QONOI11.png"
-
-    if tmdb_id:
-        # Check if the TMDB ID is in the cache
-        if tmdb_id in tmdb_cache:
-            image_url = tmdb_cache[tmdb_id]
-        else:
-            # If not in the cache, make a request to the TMDB API
-            tmdb_url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}"
-            tmdb_response = requests.get(tmdb_url).json()
-            if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
-                image_url = f"https://image.tmdb.org/t/p/w500{tmdb_response['poster_path']}"
-                # Store the image URL in the cache
-                tmdb_cache[tmdb_id] = image_url
+    tmdb_id = get_tmdb_id(info)
+    media_type = get_media_type(info)
+    image_url = get_image_url(tmdb_id, media_type)
 
     if info['type'] == 'movie':
         if length['speed'] == 0:
@@ -91,9 +67,7 @@ def set_rp(info, length):
         previous_speed = length['speed']
 
     if info['type'] == "episode":
-        season_number = str(info['season']).zfill(2)
-        episode_number = str(info['episode']).zfill(2)
-        state_info = f'S{season_number}E{episode_number}: {info["title"]}'
+        state_info = get_state_info(info)
         if length['speed'] == 0:
             print(f"Updated RPC - Paused episode \n{info['showtitle']} {state_info}")
             RPC.update(state=state_info,
@@ -116,12 +90,7 @@ def set_rp(info, length):
         previous_speed = length['speed']
             
     if info['type'] == "channel":
-        try:
-            title = str(info['title'])
-            if not title:  # Check if title is empty
-                title = 'Not available'
-        except KeyError:
-            title = 'Not available'
+        title = get_title(info)
         if length['speed'] == 0:
             print(f"Updated RPC - Paused channel \n{info['label']}")
             RPC.update(state=title,
@@ -148,6 +117,57 @@ def set_rp(info, length):
         RPC.clear()
 
     time.sleep(15)
+
+def calculate_start_time(length):
+    return (datetime.now() - timedelta(hours=length["time"]['hours'], minutes=length["time"]['minutes'], seconds=length["time"]['seconds'])).timestamp()
+
+def calculate_end_time(start_time, length):
+    start_time = datetime.fromtimestamp(start_time)
+    return (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
+
+def get_tmdb_id(info):
+    tmdb_id = None
+    if info['type'] == 'episode':
+        tv_show_id = info['tvshowid']
+        tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
+        tv_show_response = requests.get(tv_show_url).json()
+        tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
+    elif info['type'] == 'movie':
+        tmdb_id = info['uniqueid']['tmdb']
+    return tmdb_id
+
+def get_media_type(info):
+    if info['type'] == 'episode':
+        return 'tv'
+    elif info['type'] == 'movie':
+        return 'movie'
+
+def get_image_url(tmdb_id, media_type):
+    image_url = "https://i.imgur.com/QONOI11.png"
+    if tmdb_id:
+        if tmdb_id in tmdb_cache:
+            image_url = tmdb_cache[tmdb_id]
+        else:
+            tmdb_url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}"
+            tmdb_response = requests.get(tmdb_url).json()
+            if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
+                image_url = f"https://image.tmdb.org/t/p/w500{tmdb_response['poster_path']}"
+                tmdb_cache[tmdb_id] = image_url
+    return image_url
+
+def get_state_info(info):
+    season_number = str(info['season']).zfill(2)
+    episode_number = str(info['episode']).zfill(2)
+    return f'S{season_number}E{episode_number}: {info["title"]}'
+
+def get_title(info):
+    try:
+        title = str(info['title'])
+        if not title:
+            title = 'Not available'
+    except KeyError:
+        title = 'Not available'
+    return title
 
 try:
     while True:
