@@ -18,6 +18,7 @@ url = f"http://localhost:{port}/jsonrpc"
 infourl = "?request={%20%22jsonrpc%22:%20%222.0%22,%20%22method%22:%20%22Player.GetItem%22,%20%22params%22:%20{%20%22properties%22:%20[%20%22title%22,%20%22season%22,%20%22episode%22,%20%22duration%22,%20%22showtitle%22,%20%22tvshowid%22],%20%22playerid%22:%201%20},%20%22id%22:%20%22VideoGetItem%22%20}"
 lengthurl = "?request={%22jsonrpc%22:%222.0%22,%22method%22:%22Player.GetProperties%22,%22params%22:{%22playerid%22:1,%22properties%22:[%22speed%22,%22time%22,%22totaltime%22]},%22id%22:%221%22}"
 result = None
+previous_info = None
 tmdb_cache = {}
 
 # Logging
@@ -32,8 +33,11 @@ def loading(string):
 
 
 def set_rp(info, length):
+    global previous_info, previous_speed
     info = info['result']['item']
     length = length['result']
+    if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before
+        return
     start_time = (datetime.now() - timedelta(hours=length["time"]['hours'], minutes=length["time"]['minutes'], seconds=length["time"]['seconds']))
     end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
     start_time = start_time.timestamp()
@@ -67,6 +71,7 @@ def set_rp(info, length):
 
     if info['type'] == 'movie':
         if length['speed'] == 0:
+            print(f"Updated RPC - Paused movie: {info['title']}")
             RPC.update(details=str(info['title']),
                        state="Paused...",
                        large_image=image_url,
@@ -74,6 +79,7 @@ def set_rp(info, length):
                        small_image='pause',
                        small_text='Paused')
         else:
+            print(f"Updated RPC - Playing movie: {info['title']}")
             RPC.update(details=str(info['title']),
                        start=start_time,
                        end=end_time,
@@ -81,12 +87,15 @@ def set_rp(info, length):
                        large_text='Watching a movie on Kodi',
                        small_image='play',
                        small_text='Playing')
+        previous_info = info
+        previous_speed = length['speed']
 
     if info['type'] == "episode":
         season_number = str(info['season']).zfill(2)
         episode_number = str(info['episode']).zfill(2)
         state_info = f'S{season_number}E{episode_number}: {info["title"]}'
         if length['speed'] == 0:
+            print(f"Updated RPC - Paused episode: {info['title']}")
             RPC.update(state=state_info,
                        details=str(info['showtitle']),
                        large_image=image_url,
@@ -94,6 +103,7 @@ def set_rp(info, length):
                        small_image='pause',
                        small_text='Paused')
         else:
+            print(f"Updated RPC - Playing episode: {info['title']}")
             RPC.update(state=state_info,
                        details=str(info['showtitle']),
                        start=start_time,
@@ -102,6 +112,8 @@ def set_rp(info, length):
                        large_text='Watching a TV Show on Kodi',
                        small_image='play',
                        small_text='Playing')
+        previous_info = info
+        previous_speed = length['speed']
             
     if info['type'] == "channel":
         try:
@@ -111,6 +123,7 @@ def set_rp(info, length):
         except KeyError:
             title = 'Not available'
         if length['speed'] == 0:
+            print(f"Updated RPC - Paused channel: {info['label']}")
             RPC.update(state=title,
                        details=str(info['label']),
                        large_image=image_url,
@@ -118,6 +131,7 @@ def set_rp(info, length):
                        small_image='pause',
                        small_text='Paused')
         else:
+            print(f"Updated RPC - Playing channel: {info['label']}")
             RPC.update(state=title,
                        details=str(info['label']),
                        start=start_time,
@@ -126,22 +140,27 @@ def set_rp(info, length):
                        large_text='Watching Live TV on Kodi',
                        small_image='play',
                        small_text='Playing')
+        previous_info = info
+        previous_speed = length['speed']
 
     if info['type'] == 'unknown':
+        print("Cleared RPC")
         RPC.clear()
 
     time.sleep(15)
 
-
-while True:
-    try:
-        info = requests.get(url+infourl).json()
-        length = requests.get(url+lengthurl).json()
+try:
+    while True:
         try:
-            set_rp(info, length)
-        except PipeClosed:
-            print("Connection to Discord lost. Attempting to reconnect...")
-            RPC.connect()
-    except requests.exceptions.RequestException:
-        print("Cant connect to Kodi web interface. Are you sure its running? Is the web interface on?")
-        loading("Trying again in 5 seconds")
+            info = requests.get(url+infourl).json()
+            length = requests.get(url+lengthurl).json()
+            try:
+                set_rp(info, length)
+            except PipeClosed:
+                print("Connection to Discord lost. Attempting to reconnect...")
+                RPC.connect()
+        except requests.exceptions.RequestException:
+            print("Cant connect to Kodi web interface. Are you sure its running? Is the web interface on?")
+            time.sleep(60)
+except KeyboardInterrupt:
+    print("Program interrupted by user. Exiting...")
