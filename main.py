@@ -3,6 +3,7 @@ import time
 import logging
 import os
 from pypresence import Presence
+from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -136,7 +137,11 @@ while True:
     try:
         info = requests.get(url+infourl).json()
         length = requests.get(url+lengthurl).json()
-        set_rp(info, length)
+        try:
+            set_rp(info, length)
+        except PipeClosed:
+            print("Connection to Discord lost. Attempting to reconnect...")
+            RPC.connect()
     except requests.exceptions.RequestException:
         print("Cant connect to Kodi web interface. Are you sure its running? Is the web interface on?")
         loading("Trying again in 5 seconds")
