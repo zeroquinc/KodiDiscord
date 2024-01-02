@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import logging
 
 # Set logging level to WARNING
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 # Initialize global variables
 result = None
@@ -177,6 +177,10 @@ def set_rp(info, length):
 
     previous_info = info
     previous_speed = length['speed']
+    
+    # Log the current time and total time for debugging
+    logging.debug(f"Current time: {length['time']}")
+    logging.debug(f"Total time: {length['totaltime']}")
 
     # Wait for 15 seconds before the next update
     time.sleep(15)
