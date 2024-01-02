@@ -20,6 +20,8 @@ Discord Rich Presence for Kodi
 
 ![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/af23fc0f-fbde-42cf-ad25-814a74dd888b)
 
+![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/7c4a79f7-5690-4e2f-95da-199e2393fe8a)
+
 
 ## Future Ideas
 
