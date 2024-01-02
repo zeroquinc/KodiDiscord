@@ -20,7 +20,9 @@ def fetch_info(session):
     for i in range(5):  # Retry up to 5 times
         try:
             # Return the JSON response from the session's INFO_URL
-            return session.get(INFO_URL).json()
+            response = session.get(INFO_URL).json()
+            time.sleep(15)  # Sleep for 15 seconds
+            return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
             logging.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
@@ -31,7 +33,9 @@ def fetch_length(session):
     for i in range(5):  # Retry up to 5 times
         try:
             # Return the JSON response from the session's LENGTH_URL
-            return session.get(LENGTH_URL).json()
+            response = session.get(LENGTH_URL).json()
+            time.sleep(15)  # Sleep for 15 seconds
+            return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
             logging.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
