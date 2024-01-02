@@ -7,32 +7,35 @@ from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 import logging
 
-# Set logging level to INFO
-logging.basicConfig(level=logging.INFO)
+# Set logging level to WARNING
+logging.basicConfig(level=logging.WARNING)
 
 # Initialize global variables
 result = None
 previous_info = None
+session = requests.Session()  # Create a Session object
 
 # Function to fetch information from a session
 def fetch_info(session):
-    try:
-        # Return the JSON response from the session's INFO_URL
-        return session.get(INFO_URL).json()
-    except requests.exceptions.RequestException as e:
-        # Log an error message if there's a connection issue and wait for 60 seconds before the next attempt
-        logging.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
-        time.sleep(60)
+    for i in range(5):  # Retry up to 5 times
+        try:
+            # Return the JSON response from the session's INFO_URL
+            return session.get(INFO_URL).json()
+        except requests.exceptions.RequestException as e:
+            # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
+            logging.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
+            time.sleep(2 ** i)  # Exponential backoff
 
 # Function to fetch the length of a session
 def fetch_length(session):
-    try:
-        # Return the JSON response from the session's LENGTH_URL
-        return session.get(LENGTH_URL).json()
-    except requests.exceptions.RequestException as e:
-        # Log an error message if there's a connection issue and wait for 60 seconds before the next attempt
-        logging.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
-        time.sleep(60)
+    for i in range(5):  # Retry up to 5 times
+        try:
+            # Return the JSON response from the session's LENGTH_URL
+            return session.get(LENGTH_URL).json()
+        except requests.exceptions.RequestException as e:
+            # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
+            logging.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
+            time.sleep(2 ** i)  # Exponential backoff
 
 # Function to update the Rich Presence (RP) with the provided info and length
 def update_rp(info, length):
