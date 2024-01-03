@@ -222,7 +222,7 @@ def get_title(info):
     try:
         title = str(info['title'])
         if not title:
-            title = 'Not available'
+            title = 'Unknown'
     except KeyError:
-        title = 'Not available'
+        title = 'Unknown'
     return title
