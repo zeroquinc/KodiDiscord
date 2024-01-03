@@ -100,15 +100,20 @@ def update_rpc_paused_movie(info, image_url, imdb_url):
     buttons = []
     if IMDB_BUTTON_ENABLED and imdb_url:
         buttons.append({"label": "IMDb", "url": imdb_url})
+    
+    rpc_params = {
+        "details": str(info['title']),
+        "state": "Paused...",
+        "large_image": image_url,
+        "large_text": 'Watching a movie on Kodi',
+        "small_image": 'pause',
+        "small_text": 'Paused'
+    }
+    
+    if buttons:
+        rpc_params["buttons"] = buttons
 
-    RPC.update(details=str(info['title']),
-               state="Paused...",
-               large_image=image_url,
-               large_text='Watching a movie on Kodi',
-               small_image='pause',
-               small_text='Paused',
-               buttons=buttons
-               )
+    RPC.update(**rpc_params)
 
 # Function to update the RP when a movie is playing
 def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
@@ -119,14 +124,20 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
     if IMDB_BUTTON_ENABLED and imdb_url:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
-    RPC.update(details=str(info['title']),
-               start=start_time,
-               end=end_time,
-               large_image=image_url,
-               large_text='Watching a movie on Kodi',
-               small_image='play',
-               small_text='Playing',
-               buttons=buttons)
+    rpc_params = {
+        "details": str(info['title']),
+        "start": start_time,
+        "end": end_time,
+        "large_image": image_url,
+        "large_text": 'Watching a movie on Kodi',
+        "small_image": 'play',
+        "small_text": 'Playing'
+    }
+    
+    if buttons:
+        rpc_params["buttons"] = buttons
+
+    RPC.update(**rpc_params)
 
 # Function to update the RP when an episode is paused
 def update_rpc_paused_episode(info, image_url, imdb_url):
@@ -138,13 +149,19 @@ def update_rpc_paused_episode(info, image_url, imdb_url):
     if IMDB_BUTTON_ENABLED and imdb_url:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
-    RPC.update(state=state_info,
-               details=str(info['showtitle']),
-               large_image=image_url,
-               large_text='Watching a TV Show on Kodi',
-               small_image='pause',
-               small_text='Paused',
-               buttons=buttons)
+    rpc_params = {
+        "state": state_info,
+        "details": str(info['showtitle']),
+        "large_image": image_url,
+        "large_text": 'Watching a TV Show on Kodi',
+        "small_image": 'pause',
+        "small_text": 'Paused'
+    }
+    
+    if buttons:
+        rpc_params["buttons"] = buttons
+
+    RPC.update(**rpc_params)
 
 # Function to update the RP when an episode is playing
 def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url):
@@ -156,15 +173,21 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url):
     if IMDB_BUTTON_ENABLED and imdb_url:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
-    RPC.update(state=state_info,
-               details=str(info['showtitle']),
-               start=start_time,
-               end=end_time,
-               large_image=image_url,
-               large_text='Watching a TV Show on Kodi',
-               small_image='play',
-               small_text='Playing',
-               buttons=buttons)
+    rpc_params = {
+        "state": state_info,
+        "details": str(info['showtitle']),
+        "start": start_time,
+        "end": end_time,
+        "large_image": image_url,
+        "large_text": 'Watching a TV Show on Kodi',
+        "small_image": 'play',
+        "small_text": 'Playing'
+    }
+    
+    if buttons:
+        rpc_params["buttons"] = buttons
+
+    RPC.update(**rpc_params)
 
 # Function to update the RP when a channel is paused
 def update_rpc_paused_channel(info, image_url):
