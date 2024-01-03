@@ -11,7 +11,7 @@ def get_logger(name):
     console_handler = logging.StreamHandler()
     file_handler = logging.FileHandler('logfile.log')
     console_handler.setLevel(logging.INFO)
-    file_handler.setLevel(logging.DEBUG)
+    file_handler.setLevel(logging.WARNING)
 
     # Create formatters and add it to handlers
     console_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
