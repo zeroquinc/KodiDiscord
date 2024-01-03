@@ -47,3 +47,22 @@ def get_image_url(tmdb_id, media_type):
                 # Add the image URL to the cache
                 tmdb_cache[tmdb_id] = image_url
     return image_url
+
+# Function to get the IMDb ID of a media
+def get_imdb_id(info):
+    imdb_id = None
+    if info['type'] == 'episode':
+        # If the media type is an episode, fetch the IMDb ID from the TV show details
+        tv_show_id = info['tvshowid']
+        tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
+        tv_show_response = requests.get(tv_show_url).json()
+        # Check if 'result' key exists in the response
+        if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'imdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
+            imdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['imdb']
+    elif info['type'] == 'movie':
+        # If the media type is a movie, fetch the IMDb ID from the movie details
+        imdb_id = info['uniqueid']['imdb']
+    return imdb_id
+
+def get_imdb_url(imdb_id):
+    return f"https://www.imdb.com/title/{imdb_id}/"

@@ -3,7 +3,8 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
-from .tmdb import get_tmdb_id, get_media_type, get_image_url
+from config import IMDB_BUTTON_ENABLED
+from .tmdb import get_tmdb_id, get_media_type, get_image_url, get_imdb_id, get_imdb_url
 from .globals import RPC, INFO_URL, LENGTH_URL
 from .custom_logger import get_logger
 
@@ -13,6 +14,13 @@ logger = get_logger(__name__)
 result = None
 previous_info = None
 session = requests.Session()  # Create a Session object
+
+# Create dictionaries for caching
+tmdb_id_cache = {}
+imdb_id_cache = {}
+media_type_cache = {}
+image_url_cache = {}
+imdb_url_cache = {}
 
 # Function to fetch information from a session
 def fetch_info(session):
@@ -53,22 +61,22 @@ def update_rp(info, length):
 # The following functions update the RP based on the type of media (movie, episode, channel) and whether it's playing or paused
 
 # Function to update the RP for a movie
-def update_rpc_movie(info, length, start_time, end_time, image_url):
+def update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url):
     if length['speed'] == 0:
         # If the movie is paused, update the RP accordingly
-        update_rpc_paused_movie(info, image_url)
+        update_rpc_paused_movie(info, image_url, imdb_url)
     else:
         # If the movie is playing, update the RP accordingly
-        update_rpc_playing_movie(info, start_time, end_time, image_url)
+        update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url)
 
 # Function to update the RP for an episode
-def update_rpc_episode(info, length, start_time, end_time, image_url):
+def update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url):
     if length['speed'] == 0:
         # If the episode is paused, update the RP accordingly
-        update_rpc_paused_episode(info, image_url)
+        update_rpc_paused_episode(info, image_url, imdb_url)
     else:
         # If the episode is playing, update the RP accordingly
-        update_rpc_playing_episode(info, start_time, end_time, image_url)
+        update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url)
 
 # Function to update the RP for a channel
 def update_rpc_channel(info, length, start_time, end_time, image_url):
@@ -85,45 +93,69 @@ def update_rpc_channel(info, length, start_time, end_time, image_url):
 # The following functions update the RP based on the type of media (movie, episode, channel) and whether it's playing or paused
 
 # Function to update the RP when a movie is paused
-def update_rpc_paused_movie(info, image_url):
+def update_rpc_paused_movie(info, image_url, imdb_url):
     logger.info(f"Updated RPC")
     logger.info(f"Paused movie - {info['title']}")
+    
+    buttons = []
+    if IMDB_BUTTON_ENABLED and imdb_url:
+        buttons.append({"label": "IMDb", "url": imdb_url})
+
     RPC.update(details=str(info['title']),
                state="Paused...",
                large_image=image_url,
                large_text='Watching a movie on Kodi',
                small_image='pause',
-               small_text='Paused')
+               small_text='Paused',
+               buttons=buttons
+               )
 
 # Function to update the RP when a movie is playing
-def update_rpc_playing_movie(info, start_time, end_time, image_url):
+def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
     logger.info(f"Updated RPC")
     logger.info(f"Playing movie - {info['title']}")
+    
+    buttons = []
+    if IMDB_BUTTON_ENABLED and imdb_url:
+        buttons.append({"label": "IMDb", "url": imdb_url})
+    
     RPC.update(details=str(info['title']),
                start=start_time,
                end=end_time,
                large_image=image_url,
                large_text='Watching a movie on Kodi',
                small_image='play',
-               small_text='Playing')
+               small_text='Playing',
+               buttons=buttons)
 
 # Function to update the RP when an episode is paused
-def update_rpc_paused_episode(info, image_url):
+def update_rpc_paused_episode(info, image_url, imdb_url):
     state_info = get_state_info(info)
     logger.info(f"Updated RPC")
     logger.info(f"Paused episode - {info['showtitle']} {state_info}")
+    
+    buttons = []
+    if IMDB_BUTTON_ENABLED and imdb_url:
+        buttons.append({"label": "IMDb", "url": imdb_url})
+    
     RPC.update(state=state_info,
                details=str(info['showtitle']),
                large_image=image_url,
                large_text='Watching a TV Show on Kodi',
                small_image='pause',
-               small_text='Paused')
+               small_text='Paused',
+               buttons=buttons)
 
 # Function to update the RP when an episode is playing
-def update_rpc_playing_episode(info, start_time, end_time, image_url):
+def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url):
     state_info = get_state_info(info)
     logger.info(f"Updated RPC")
     logger.info(f"Playing episode - {info['showtitle']} {state_info}")
+    
+    buttons = []
+    if IMDB_BUTTON_ENABLED and imdb_url:
+        buttons.append({"label": "IMDb", "url": imdb_url})
+    
     RPC.update(state=state_info,
                details=str(info['showtitle']),
                start=start_time,
@@ -131,7 +163,8 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url):
                large_image=image_url,
                large_text='Watching a TV Show on Kodi',
                small_image='play',
-               small_text='Playing')
+               small_text='Playing',
+               buttons=buttons)
 
 # Function to update the RP when a channel is paused
 def update_rpc_paused_channel(info, image_url):
@@ -181,16 +214,42 @@ def set_rp(info, length):
     start_time = calculate_start_time(length)
     end_time = calculate_end_time(start_time, length)
 
-    tmdb_id = get_tmdb_id(info)
-    media_type = get_media_type(info)
-    image_url = get_image_url(tmdb_id, media_type)
+    # Create a unique string key from the info dictionary
+    info_key = f"{info['type']}_{info['id']}"
+
+    # Use the string key in the cache
+    tmdb_id = tmdb_id_cache.get(info_key)
+    if tmdb_id is None:
+        tmdb_id = get_tmdb_id(info)
+        tmdb_id_cache[info_key] = tmdb_id
+
+    imdb_id = imdb_id_cache.get(info_key)
+    if imdb_id is None:
+        imdb_id = get_imdb_id(info)
+        imdb_id_cache[info_key] = imdb_id
+
+    media_type = media_type_cache.get(info_key)
+    if media_type is None:
+        media_type = get_media_type(info)
+        media_type_cache[info_key] = media_type
+
+    image_key = f"{tmdb_id}_{media_type}"
+    image_url = image_url_cache.get(image_key)
+    if image_url is None:
+        image_url = get_image_url(tmdb_id, media_type)
+        image_url_cache[image_key] = image_url
+
+    imdb_url = imdb_url_cache.get(imdb_id)
+    if imdb_url is None:
+        imdb_url = get_imdb_url(imdb_id)
+        imdb_url_cache[imdb_id] = imdb_url
 
     if info['type'] == 'movie':
         # If the media type is a movie, update the RP accordingly
-        update_rpc_movie(info, length, start_time, end_time, image_url)
+        update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url)
     elif info['type'] == 'episode':
         # If the media type is an episode, update the RP accordingly
-        update_rpc_episode(info, length, start_time, end_time, image_url)
+        update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url)
     elif info['type'] == 'channel':
         # If the media type is a channel, update the RP accordingly
         update_rpc_channel(info, length, start_time, end_time, image_url)

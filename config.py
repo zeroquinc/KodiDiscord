@@ -1,0 +1,1 @@
+IMDB_BUTTON_ENABLED = True  # Set this to False to disable the IMDb button
