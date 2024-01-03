@@ -10,8 +10,8 @@ def get_logger(name):
     # Create handlers
     console_handler = logging.StreamHandler()
     file_handler = logging.FileHandler('logfile.log')
-    console_handler.setLevel(logging.WARNING)
-    file_handler.setLevel(logging.ERROR)
+    console_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)
 
     # Create formatters and add it to handlers
     console_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')

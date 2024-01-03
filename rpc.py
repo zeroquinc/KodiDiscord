@@ -75,6 +75,9 @@ def update_rpc_channel(info, length, start_time, end_time, image_url):
     if length['speed'] == 0:
         # If the channel is paused, update the RP accordingly
         update_rpc_paused_channel(info, image_url)
+    elif length['time']['hours'] == 0 and length['time']['minutes'] == 0 and length['time']['seconds'] == 0 and length['totaltime']['hours'] == 0 and length['totaltime']['minutes'] == 0 and length['totaltime']['seconds'] == 0:
+        # If start_time and end_time are both zero, update the RP without them, for EPG without information about start and end time
+        update_rpc_playing_channel_without_time(info, image_url)
     else:
         # If the channel is playing, update the RP accordingly
         update_rpc_playing_channel(info, start_time, end_time, image_url)
@@ -141,23 +144,25 @@ def update_rpc_paused_channel(info, image_url):
 def update_rpc_playing_channel(info, start_time, end_time, image_url):
     title = get_title(info)
     logger.info(f"Updated RPC - Playing channel \n{info['label']}")
-    # Check if both current time and total time are zero, basicly checking if there is EPG info available
-    if start_time != 0 and end_time != 0:
-        RPC.update(state=title,
-                   details=str(info['label']),
-                   start=start_time,
-                   end=end_time,
-                   large_image=image_url,
-                   large_text='Watching Live TV on Kodi',
-                   small_image='play',
-                   small_text='Playing')
-    else:
-        RPC.update(state=title,
-                   details=str(info['label']),
-                   large_image=image_url,
-                   large_text='Watching Live TV on Kodi',
-                   small_image='play',
-                   small_text='Playing')
+    RPC.update(state=title,
+                details=str(info['label']),
+                start=start_time,
+                end=end_time,
+                large_image=image_url,
+                large_text='Watching Live TV on Kodi',
+                small_image='play',
+                small_text='Playing')
+    
+# Function to update the RP when a channel is playing without start and end time
+def update_rpc_playing_channel_without_time(info, image_url):
+    title = get_title(info)
+    logger.info(f"Updated RPC - Playing channel \n{info['label']}")
+    RPC.update(state=title,
+               details=str(info['label']),
+               large_image=image_url,
+               large_text='Watching Live TV on Kodi',
+               small_image='play',
+               small_text='Playing')
 
 # Function to set the RP with the provided info and length
 def set_rp(info, length):
