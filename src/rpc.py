@@ -86,7 +86,8 @@ def update_rpc_channel(info, length, start_time, end_time, image_url):
 
 # Function to update the RP when a movie is paused
 def update_rpc_paused_movie(info, image_url):
-    logger.info(f"Updated RPC - Paused movie \n{info['title']}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Paused movie - {info['title']}")
     RPC.update(details=str(info['title']),
                state="Paused...",
                large_image=image_url,
@@ -96,7 +97,8 @@ def update_rpc_paused_movie(info, image_url):
 
 # Function to update the RP when a movie is playing
 def update_rpc_playing_movie(info, start_time, end_time, image_url):
-    logger.info(f"Updated RPC - Playing movie \n{info['title']}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Playing movie - {info['title']}")
     RPC.update(details=str(info['title']),
                start=start_time,
                end=end_time,
@@ -108,7 +110,8 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url):
 # Function to update the RP when an episode is paused
 def update_rpc_paused_episode(info, image_url):
     state_info = get_state_info(info)
-    logger.info(f"Updated RPC - Paused episode \n{info['showtitle']} {state_info}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Paused episode - {info['showtitle']} {state_info}")
     RPC.update(state=state_info,
                details=str(info['showtitle']),
                large_image=image_url,
@@ -119,7 +122,8 @@ def update_rpc_paused_episode(info, image_url):
 # Function to update the RP when an episode is playing
 def update_rpc_playing_episode(info, start_time, end_time, image_url):
     state_info = get_state_info(info)
-    logger.info(f"Updated RPC - Playing episode \n{info['showtitle']} {state_info}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Playing episode - {info['showtitle']} {state_info}")
     RPC.update(state=state_info,
                details=str(info['showtitle']),
                start=start_time,
@@ -132,7 +136,8 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url):
 # Function to update the RP when a channel is paused
 def update_rpc_paused_channel(info, image_url):
     title = get_title(info)
-    logger.info(f"Updated RPC - Paused channel \n{info['label']}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Paused channel - {info['label']}")
     RPC.update(state=title,
                details=str(info['label']),
                large_image=image_url,
@@ -143,7 +148,8 @@ def update_rpc_paused_channel(info, image_url):
 # Function to update the RP when a channel is playing
 def update_rpc_playing_channel(info, start_time, end_time, image_url):
     title = get_title(info)
-    logger.info(f"Updated RPC - Playing channel \n{info['label']}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Playing channel - {info['label']}")
     RPC.update(state=title,
                 details=str(info['label']),
                 start=start_time,
@@ -156,7 +162,8 @@ def update_rpc_playing_channel(info, start_time, end_time, image_url):
 # Function to update the RP when a channel is playing without start and end time
 def update_rpc_playing_channel_without_time(info, image_url):
     title = get_title(info)
-    logger.info(f"Updated RPC - Playing channel \n{info['label']}")
+    logger.info(f"Updated RPC")
+    logger.info(f"Playing channel - {info['label']}")
     RPC.update(state=title,
                details=str(info['label']),
                large_image=image_url,
