@@ -20,7 +20,7 @@ def fetch_info(session):
         try:
             # Return the JSON response from the session's INFO_URL
             response = session.get(INFO_URL).json()
-            time.sleep(15)  # Sleep for 15 seconds
+            time.sleep(3)  # Sleep for 3 seconds
             return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
@@ -33,7 +33,7 @@ def fetch_length(session):
         try:
             # Return the JSON response from the session's LENGTH_URL
             response = session.get(LENGTH_URL).json()
-            time.sleep(15)  # Sleep for 15 seconds
+            time.sleep(3)  # Sleep for 3 seconds
             return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
@@ -205,9 +205,6 @@ def set_rp(info, length):
     # Log the current time and total time for debugging
     logger.debug(f"Current time: {length['time']}")
     logger.debug(f"Total time: {length['totaltime']}")
-
-    # Wait for 15 seconds before the next update
-    time.sleep(15)
 
 # Function to calculate the start time of a media
 def calculate_start_time(length):
