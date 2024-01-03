@@ -1,7 +1,8 @@
 import requests
 import time
-from rpc import fetch_info, fetch_length, update_rp
-from custom_logger import get_logger
+
+from src.rpc import fetch_info, fetch_length, update_rp
+from src.custom_logger import get_logger
 
 logger = get_logger(__name__)
 

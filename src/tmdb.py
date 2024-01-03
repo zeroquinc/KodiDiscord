@@ -1,5 +1,6 @@
 import requests
-from globals import TMDB_API_KEY, port
+
+from .globals import TMDB_API_KEY, port
 
 # Initialize a cache for TMDB IDs
 tmdb_cache = {}
