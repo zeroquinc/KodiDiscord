@@ -29,3 +29,7 @@ Discord Rich Presence for Kodi
 
 * Add Music
 * Try to make it an Kodi addon
+
+## Contact
+
+If you have any questions, please make an issue or add me on Discord.
