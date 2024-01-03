@@ -5,7 +5,7 @@ from tmdb import get_tmdb_id, get_media_type, get_image_url
 from globals import RPC, INFO_URL, LENGTH_URL
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
-from logging import get_logger
+from custom_logger import get_logger
 
 logger = get_logger(__name__)
 
