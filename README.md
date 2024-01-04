@@ -5,11 +5,13 @@ Discord Rich Presence for Kodi
 
 * Make a TMDB account and copy your API key
 * Download the repo
-  * install `requirements.txt`
-  * rename `.env.example` to `.env` 
-  * fill in your TMDB API key
-  * Edit `config.py` and change `IMDB_BUTTON_ENABLED` to either `False` or `True` for buttons, see examples below.
-  * run `main.py`
+  * Install `requirements.txt`
+  * Rename `.env.example` to `.env` 
+  * Fill in your TMDB API key
+  * Edit `config.py`
+  * Change `IMDB_BUTTON_ENABLED` to either `False` or `True` for buttons, see examples below
+  * Change `TIME_REMAINING_RPC_ENABLED` to either `False` or `True` to include the time left in the RPC
+  * Run `main.py`
 
 ## Supported Media Types
 
@@ -32,4 +34,4 @@ Discord Rich Presence for Kodi
 
 ## Contact
 
-If you have any questions, please make an issue or add me on Discord.
+If you have any questions, please make an issue or add me on Discord
