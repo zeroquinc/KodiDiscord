@@ -127,11 +127,13 @@ def calculate_end_time(start_time, length):
 The following functions are used to get the state info and title of a media
 """
 
-# Function to get the state info of a media
 def get_state_info(info):
-    season_number = str(info['season']).zfill(2)
-    episode_number = str(info['episode']).zfill(2)
-    return f'S{season_number}E{episode_number}: {info["title"]}'
+    if 'season' in info and info['season'] and 'episode' in info and info['episode']:
+        season_number = str(info['season']).zfill(2)
+        episode_number = str(info['episode']).zfill(2)
+        return f'S{season_number}E{episode_number}: {info["title"]}'
+    else:
+        return info["title"]
 
 # Function to get the title of a media
 def get_title(info):
