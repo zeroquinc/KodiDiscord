@@ -187,7 +187,7 @@ def update_rpc_paused_movie(info, image_url, imdb_url):
     logger.info(f"Paused movie - {info['title']}")
     
     buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url:
+    if IMDB_BUTTON_ENABLED and imdb_url is not None:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
     rpc_params = {
@@ -210,7 +210,7 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
     logger.info(f"Playing movie - {info['title']}")
     
     buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url:
+    if IMDB_BUTTON_ENABLED and imdb_url is not None:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
     rpc_params = {
@@ -235,7 +235,7 @@ def update_rpc_paused_episode(info, image_url, imdb_url):
     logger.info(f"Paused episode - {info['showtitle']} {state_info}")
     
     buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url:
+    if IMDB_BUTTON_ENABLED and imdb_url is not None:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
     rpc_params = {
@@ -259,7 +259,7 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url):
     logger.info(f"Playing episode - {info['showtitle']} {state_info}")
     
     buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url:
+    if IMDB_BUTTON_ENABLED and imdb_url is not None:
         buttons.append({"label": "IMDb", "url": imdb_url})
     
     rpc_params = {
