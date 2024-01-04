@@ -146,7 +146,7 @@ def get_title(info):
     return title
 
 """
-The following functions update the RP based on the type of media (movie, episode, channel) and whether it's playing or paused
+The following functions check the speed and time of the media and sends the info to the appropriate function
 """
 
 # Function to update the RP for a movie
