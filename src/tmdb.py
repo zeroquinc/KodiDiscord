@@ -9,7 +9,7 @@ This file contains functions to fetch data from the TMDB API.
 # Function to get the media type of a media
 def get_media_type(info):
     if info['type'] == 'episode':
-        # If the media type is an episode, return 'tv'
+        # If the media type is an episode, return 'tv', this is necessary because the TMDB API uses 'tv' for TV shows and Kodi uses 'episode' for TV shows
         return 'tv'
     elif info['type'] == 'movie':
         # If the media type is a movie, return 'movie'
