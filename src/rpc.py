@@ -285,35 +285,50 @@ def update_rpc_paused_channel(info, image_url):
     title = get_title(info)
     logger.info(UPDATED_RPC)
     logger.info(f"Paused channel - {info['label']}")
-    RPC.update(state=title,
-               details=str(info['label']),
-               large_image=image_url,
-               large_text=LIVETV_LARGE_TEXT,
-               small_image='pause',
-               small_text='Paused')
+    
+    rpc_params = {
+        "state": title,
+        "details": str(info['label']),
+        "large_image": image_url,
+        "large_text": LIVETV_LARGE_TEXT,
+        "small_image": 'pause',
+        "small_text": 'Paused'
+    }
+    
+    RPC.update(**rpc_params)
 
 # Function to update the RP when a channel is playing
 def update_rpc_playing_channel(info, start_time, end_time, image_url):
     title = get_title(info)
     logger.info(UPDATED_RPC)
     logger.info(f"Playing channel - {info['label']}")
-    RPC.update(state=title,
-                details=str(info['label']),
-                start=start_time,
-                end=end_time,
-                large_image=image_url,
-                large_text=LIVETV_LARGE_TEXT,
-                small_image='play',
-                small_text='Playing')
+    
+    rpc_params = {
+        "state": title,
+        "details": str(info['label']),
+        "start": start_time,
+        "end": end_time,
+        "large_image": image_url,
+        "large_text": LIVETV_LARGE_TEXT,
+        "small_image": 'play',
+        "small_text": 'Playing'
+    }
+    
+    RPC.update(**rpc_params)
     
 # Function to update the RP when a channel is playing without start and end time
 def update_rpc_playing_channel_without_time(info, image_url):
     title = get_title(info)
     logger.info(UPDATED_RPC)
     logger.info(f"Playing channel - {info['label']}")
-    RPC.update(state=title,
-               details=str(info['label']),
-               large_image=image_url,
-               large_text=LIVETV_LARGE_TEXT,
-               small_image='play',
-               small_text='Playing')
+    
+    rpc_params = {
+        "state": title,
+        "details": str(info['label']),
+        "large_image": image_url,
+        "large_text": LIVETV_LARGE_TEXT,
+        "small_image": 'play',
+        "small_text": 'Playing'
+    }
+    
+    RPC.update(**rpc_params)
