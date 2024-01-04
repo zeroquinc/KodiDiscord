@@ -6,6 +6,10 @@ from src.custom_logger import get_logger
 
 logger = get_logger(__name__)
 
+"""
+This file contains the main function of the program. Run this to start the program.
+"""
+
 def main():
     try:
         with requests.Session() as session:
