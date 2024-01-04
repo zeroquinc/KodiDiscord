@@ -3,7 +3,7 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
-from config import IMDB_BUTTON_ENABLED
+from config import IMDB_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED
 from .tmdb import get_tmdb_id, get_media_type, get_image_url, get_imdb_id, get_imdb_url
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
 from .custom_logger import get_logger
@@ -217,13 +217,15 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
     
     rpc_params = {
         "details": str(info['title']),
-        "start": start_time,
-        "end": end_time,
         "large_image": image_url,
         "large_text": MOVIE_LARGE_TEXT,
         "small_image": 'play',
         "small_text": 'Playing'
     }
+    
+    if TIME_REMAINING_RPC_ENABLED:
+        rpc_params["start"] = start_time
+        rpc_params["end"] = end_time
     
     if buttons:
         rpc_params["buttons"] = buttons
@@ -267,13 +269,15 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url):
     rpc_params = {
         "state": state_info,
         "details": str(info['showtitle']),
-        "start": start_time,
-        "end": end_time,
         "large_image": image_url,
         "large_text": EPISODE_LARGE_TEXT,
         "small_image": 'play',
         "small_text": 'Playing'
     }
+    
+    if TIME_REMAINING_RPC_ENABLED:
+        rpc_params["start"] = start_time
+        rpc_params["end"] = end_time
     
     if buttons:
         rpc_params["buttons"] = buttons
@@ -306,13 +310,15 @@ def update_rpc_playing_channel(info, start_time, end_time, image_url):
     rpc_params = {
         "state": title,
         "details": str(info['label']),
-        "start": start_time,
-        "end": end_time,
         "large_image": image_url,
         "large_text": LIVETV_LARGE_TEXT,
         "small_image": 'play',
         "small_text": 'Playing'
     }
+    
+    if TIME_REMAINING_RPC_ENABLED:
+        rpc_params["start"] = start_time
+        rpc_params["end"] = end_time
     
     RPC.update(**rpc_params)
     
