@@ -22,6 +22,67 @@ media_type_cache = {}
 image_url_cache = {}
 imdb_url_cache = {}
 
+# Function to set the RP with the provided info and length
+def set_rp(info, length):
+    global previous_info, previous_speed
+    info = info['result']['item']
+    length = length['result']
+    if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
+        return
+    start_time = calculate_start_time(length)
+    end_time = calculate_end_time(start_time, length)
+
+    # Create a unique string key from the info dictionary
+    info_key = f"{info['type']}_{info['id']}"
+
+    # Use the string key in the cache
+    tmdb_id = tmdb_id_cache.get(info_key)
+    if tmdb_id is None:
+        tmdb_id = get_tmdb_id(info)
+        tmdb_id_cache[info_key] = tmdb_id
+
+    imdb_id = imdb_id_cache.get(info_key)
+    if imdb_id is None:
+        imdb_id = get_imdb_id(info)
+        imdb_id_cache[info_key] = imdb_id
+
+    media_type = media_type_cache.get(info_key)
+    if media_type is None:
+        media_type = get_media_type(info)
+        media_type_cache[info_key] = media_type
+
+    image_key = f"{tmdb_id}_{media_type}"
+    image_url = image_url_cache.get(image_key)
+    if image_url is None:
+        image_url = get_image_url(tmdb_id, media_type)
+        image_url_cache[image_key] = image_url
+
+    imdb_url = imdb_url_cache.get(imdb_id)
+    if imdb_url is None:
+        imdb_url = get_imdb_url(imdb_id)
+        imdb_url_cache[imdb_id] = imdb_url
+
+    if info['type'] == 'movie':
+        # If the media type is a movie, update the RP accordingly
+        update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url)
+    elif info['type'] == 'episode':
+        # If the media type is an episode, update the RP accordingly
+        update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url)
+    elif info['type'] == 'channel':
+        # If the media type is a channel, update the RP accordingly
+        update_rpc_channel(info, length, start_time, end_time, image_url)
+    elif info['type'] == 'unknown' and length['speed'] == 0:
+        # If nothing is playing, log an info message and clear the RP
+        logger.info("Nothing is playing. Clearing RPC...")
+        RPC.clear()
+
+    previous_info = info
+    previous_speed = length['speed']
+    
+    # Log the current time and total time for debugging
+    logger.debug(f"Current time: {length['time']}")
+    logger.debug(f"Total time: {length['totaltime']}")
+
 # Function to fetch information from a session
 def fetch_info(session):
     for i in range(5):  # Retry up to 5 times
@@ -226,67 +287,6 @@ def update_rpc_playing_channel_without_time(info, image_url):
                large_text='Watching Live TV on Kodi',
                small_image='play',
                small_text='Playing')
-
-# Function to set the RP with the provided info and length
-def set_rp(info, length):
-    global previous_info, previous_speed
-    info = info['result']['item']
-    length = length['result']
-    if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
-        return
-    start_time = calculate_start_time(length)
-    end_time = calculate_end_time(start_time, length)
-
-    # Create a unique string key from the info dictionary
-    info_key = f"{info['type']}_{info['id']}"
-
-    # Use the string key in the cache
-    tmdb_id = tmdb_id_cache.get(info_key)
-    if tmdb_id is None:
-        tmdb_id = get_tmdb_id(info)
-        tmdb_id_cache[info_key] = tmdb_id
-
-    imdb_id = imdb_id_cache.get(info_key)
-    if imdb_id is None:
-        imdb_id = get_imdb_id(info)
-        imdb_id_cache[info_key] = imdb_id
-
-    media_type = media_type_cache.get(info_key)
-    if media_type is None:
-        media_type = get_media_type(info)
-        media_type_cache[info_key] = media_type
-
-    image_key = f"{tmdb_id}_{media_type}"
-    image_url = image_url_cache.get(image_key)
-    if image_url is None:
-        image_url = get_image_url(tmdb_id, media_type)
-        image_url_cache[image_key] = image_url
-
-    imdb_url = imdb_url_cache.get(imdb_id)
-    if imdb_url is None:
-        imdb_url = get_imdb_url(imdb_id)
-        imdb_url_cache[imdb_id] = imdb_url
-
-    if info['type'] == 'movie':
-        # If the media type is a movie, update the RP accordingly
-        update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url)
-    elif info['type'] == 'episode':
-        # If the media type is an episode, update the RP accordingly
-        update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url)
-    elif info['type'] == 'channel':
-        # If the media type is a channel, update the RP accordingly
-        update_rpc_channel(info, length, start_time, end_time, image_url)
-    elif info['type'] == 'unknown' and length['speed'] == 0:
-        # If nothing is playing, log an info message and clear the RP
-        logger.info("Nothing is playing. Clearing RPC...")
-        RPC.clear()
-
-    previous_info = info
-    previous_speed = length['speed']
-    
-    # Log the current time and total time for debugging
-    logger.debug(f"Current time: {length['time']}")
-    logger.debug(f"Total time: {length['totaltime']}")
 
 # Function to calculate the start time of a media
 def calculate_start_time(length):
