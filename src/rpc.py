@@ -3,7 +3,7 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
-from config import IMDB_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED
+from config import IMDB_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, DIRECTOR_ENABLED
 from .tmdb import get_tmdb_id, get_media_type, get_image_url, get_imdb_id, get_imdb_url
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
 from .custom_logger import get_logger
@@ -193,7 +193,7 @@ def update_rpc_paused_movie(info, image_url, imdb_url):
         buttons.append({"label": "IMDb", "url": imdb_url})
     
     rpc_params = {
-        "details": str(info['title']),
+        "details": str(info['title']) + ' (' + str(info['year']) + ')',
         "state": "Paused...",
         "large_image": image_url,
         "large_text": MOVIE_LARGE_TEXT,
@@ -216,7 +216,7 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
         buttons.append({"label": "IMDb", "url": imdb_url})
     
     rpc_params = {
-        "details": str(info['title']),
+        "details": str(info['title']) + ' (' + str(info['year']) + ')',
         "large_image": image_url,
         "large_text": MOVIE_LARGE_TEXT,
         "small_image": 'play',
@@ -226,6 +226,11 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
     if TIME_REMAINING_RPC_ENABLED:
         rpc_params["start"] = start_time
         rpc_params["end"] = end_time
+
+    if DIRECTOR_ENABLED and 'director' in info and info['director'] is not None:
+        # Join the elements of the list into a single string
+        director = ', '.join(info['director'])
+        rpc_params["state"] = f"{director}"
     
     if buttons:
         rpc_params["buttons"] = buttons
