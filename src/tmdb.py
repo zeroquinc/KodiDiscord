@@ -1,4 +1,5 @@
 import requests
+from urllib.parse import quote
 
 from .globals import TMDB_API_KEY, port
 
@@ -19,13 +20,22 @@ def get_media_type(info):
 def get_tmdb_id(info):
     tmdb_id = None
     if info['type'] == 'episode':
-        # If the media type is an episode, fetch the TMDB ID from the TV show details
         tv_show_id = info['tvshowid']
-        tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
-        tv_show_response = requests.get(tv_show_url).json()
-        # Check if 'result' key exists in the response
-        if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'tmdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
-            tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
+        if tv_show_id is None or tv_show_id == -1:
+            # If tvshowid is None or -1, fetch the TMDB ID from the showtitle
+            showtitle = info['showtitle']
+            showtitle_url = f"https://api.themoviedb.org/3/search/tv?api_key={TMDB_API_KEY}&query={showtitle}"
+            showtitle_response = requests.get(showtitle_url).json()
+            # Check if 'result' key exists in the response
+            if 'results' in showtitle_response and len(showtitle_response['results']) > 0:
+                tmdb_id = showtitle_response['results'][0]['id']
+        else:
+            # If tvshowid is not None or -1, fetch the TMDB ID from the TV show details
+            tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
+            tv_show_response = requests.get(tv_show_url).json()
+            # Check if 'result' key exists in the response
+            if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'tmdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
+                tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
     elif info['type'] == 'movie':
         # If the media type is a movie, fetch the TMDB ID from the movie details
         tmdb_id = info['uniqueid']['tmdb']
