@@ -15,7 +15,7 @@ Discord Rich Presence for Kodi
 1. Edit `config.py` and make the following changes:
    * Set `IMDB_BUTTON_ENABLED` to either `False` or `True` to enable or disable buttons (see examples below)
    * Set `TIME_REMAINING_RPC_ENABLED` to either `False` or `True` to include the time left in the RPC
-   * Set `DIRECTOR_ENABLED` to either `False or `True` to include the Directors in the RPC
+   * Set `DIRECTOR_ENABLED` to either `False` or `True` to include the Directors in the RPC
 
 ## 🎯 Usage
 Run `main.py`
