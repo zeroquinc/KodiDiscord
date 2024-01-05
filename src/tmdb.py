@@ -64,7 +64,8 @@ def get_imdb_id(info):
             imdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['imdb']
     elif info['type'] == 'movie':
         # If the media type is a movie, fetch the IMDb ID from the movie details
-        imdb_id = info['uniqueid']['imdb']
+        if 'uniqueid' in info and 'imdb' in info['uniqueid']:
+            imdb_id = info['uniqueid']['imdb']
     return imdb_id
 
 # Function to get the image URL of a media
