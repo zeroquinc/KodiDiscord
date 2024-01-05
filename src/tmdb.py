@@ -23,7 +23,7 @@ def get_tmdb_id(info):
         tv_show_id = info['tvshowid']
         if tv_show_id is None or tv_show_id == -1:
             # If tvshowid is None or -1, fetch the TMDB ID from the showtitle
-            showtitle = info['showtitle']
+            showtitle = quote(info['showtitle'])
             showtitle_url = f"https://api.themoviedb.org/3/search/tv?api_key={TMDB_API_KEY}&query={showtitle}"
             showtitle_response = requests.get(showtitle_url).json()
             # Check if 'result' key exists in the response
