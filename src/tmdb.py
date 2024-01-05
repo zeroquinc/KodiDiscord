@@ -38,7 +38,17 @@ def get_tmdb_id(info):
                 tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
     elif info['type'] == 'movie':
         # If the media type is a movie, fetch the TMDB ID from the movie details
-        tmdb_id = info['uniqueid']['tmdb']
+        tv_show_id = info['tvshowid']
+        if tv_show_id is None or tv_show_id == -1:
+            # If tvshowid is None or -1, fetch the TMDB ID from the title
+            title = quote(info['title'])
+            title_url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_API_KEY}&query={title}"
+            title_response = requests.get(title_url).json()
+            # Check if 'result' key exists in the response
+            if 'results' in title_response and len(title_response['results']) > 0:
+                tmdb_id = title_response['results'][0]['id']
+        else:
+            tmdb_id = info['uniqueid']['tmdb']
     return tmdb_id
 
 # Function to get the IMDb ID of a media
