@@ -3,4 +3,4 @@ import sys
 
 # Remove the default handler and add a new one that only logs INFO and higher
 logger.remove()
-logger.add(sys.stderr, level='INFO')
+logger.add(sys.stdout, level='INFO', colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | <level>{message}</level>")
