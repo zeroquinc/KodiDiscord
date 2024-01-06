@@ -16,8 +16,8 @@ Discord Rich Presence for Kodi
    * Set `IMDB_BUTTON_ENABLED` to either `False` or `True` to enable or disable buttons (see examples below)
    * Set `TIME_REMAINING_RPC_ENABLED` to either `False` or `True` to include the time left in the RPC
    * Set `DIRECTOR_ENABLED` to either `False` or `True` to include the Directors in the RPC
-   * Set `GENRES_ENABLED` to either `False` or `True` to include the Genres.
-   * **Note: `DIRECTOR_ENABLED` and `GENRES_ENABLED` can't be both True, one has to be False because Discord only allows 2 lines.**
+   * Set `GENRES_ENABLED` to either `False` or `True` to include the Genres (movies only)
+   * **Note: `DIRECTOR_ENABLED` and `GENRES_ENABLED` can't be both True, one has to be False because Discord only allows 2 lines**
 
 ## 🎯 Usage
 Run `main.py`
