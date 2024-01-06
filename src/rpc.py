@@ -3,12 +3,10 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
+from src.custom_logger import logger
 from config import IMDB_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, DIRECTOR_ENABLED
 from .tmdb import get_tmdb_id, get_media_type, get_image_url, get_imdb_id, get_imdb_url
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
-from .custom_logger import get_logger
-
-logger = get_logger(__name__)
 
 """"
 The following variables are used to prevent unnecessary updates to the RP
@@ -40,8 +38,8 @@ def set_rp(info, length):
     start_time = calculate_start_time(length)
     end_time = calculate_end_time(start_time, length)
     media_type = get_media_type(info)
-    tmdb_id = get_tmdb_id(info)
-    imdb_id = get_imdb_id(info)
+    tmdb_id = get_tmdb_id(info, media_type)
+    imdb_id = get_imdb_id(info, media_type)
     image_url = get_image_url(tmdb_id, media_type)
     imdb_url = get_imdb_url(imdb_id)
 
@@ -76,7 +74,6 @@ def fetch_info(session):
         try:
             # Return the JSON response from the session's INFO_URL
             response = session.get(INFO_URL).json()
-            time.sleep(3)  # Sleep for 3 seconds
             return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
@@ -89,7 +86,6 @@ def fetch_length(session):
         try:
             # Return the JSON response from the session's LENGTH_URL
             response = session.get(LENGTH_URL).json()
-            time.sleep(3)  # Sleep for 3 seconds
             return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt

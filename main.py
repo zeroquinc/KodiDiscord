@@ -1,14 +1,13 @@
 import requests
 import time
 
+from src.custom_logger import logger
 from src.rpc import fetch_info, fetch_length, update_rp
-from src.custom_logger import get_logger
-
-logger = get_logger(__name__)
 
 """
 This file contains the main function of the program. Run this to start the program.
 """
+
 
 def main():
     try:
@@ -24,7 +23,7 @@ def main():
                         update_rp(info, length)
                         last_info, last_length = info, length
                     else:
-                        time.sleep(1)  # Pause for 1 second if there's no new information
+                        time.sleep(3)  # Pause for 3 seconds if there's no new information
     except KeyboardInterrupt:
         logger.info("Program interrupted by user. Exiting...")
 
