@@ -190,7 +190,7 @@ def update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url):
         buttons.append({"label": "IMDb", "url": imdb_url})
         
     if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDB", "url": tmdb_url})
+        buttons.append({"label": "TMDb", "url": tmdb_url})
     
     rpc_params = {
         "details": str(info['title']) + ' (' + str(info['year']) + ')',
@@ -216,7 +216,7 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tm
         buttons.append({"label": "IMDb", "url": imdb_url})
         
     if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDB", "url": tmdb_url})
+        buttons.append({"label": "TMDb", "url": tmdb_url})
     
     rpc_params = {
         "details": str(info['title']) + ' (' + str(info['year']) + ')',
@@ -256,7 +256,7 @@ def update_rpc_paused_episode(info, image_url, imdb_url, tmdb_url):
         buttons.append({"label": "IMDb", "url": imdb_url})
         
     if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDB", "url": tmdb_url})
+        buttons.append({"label": "TMDb", "url": tmdb_url})
     
     rpc_params = {
         "state": state_info,
@@ -284,7 +284,7 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url, 
         buttons.append({"label": "IMDb", "url": imdb_url})
         
     if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDB", "url": tmdb_url})
+        buttons.append({"label": "TMDb", "url": tmdb_url})
     
     rpc_params = {
         "state": state_info,
