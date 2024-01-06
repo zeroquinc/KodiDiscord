@@ -21,7 +21,7 @@ def get_media_type(info):
         return 'channel'
 
 # Function to get the TMDB ID of a media
-def get_tmdb_id(info, media_type):
+def get_tmdb_id_tmdb(info, media_type):
     # If the media type is a channel, return None
     if media_type == 'channel':
         return None
@@ -41,8 +41,12 @@ def get_tmdb_id(info, media_type):
             logger.debug("Cannot find uniqueid, trying to find tmdb_id via showtitle")
     else:
         if info['type'] == 'movie':
-            tmdb_id = get_tmdb_id_for_movie(info)
-            logger.debug("Cannot find uniqueid, trying to find tmdb_id via title")
+            if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
+                tmdb_id = info['uniqueid']['tmdb']
+                logger.debug("Found uniqueid in info")
+            elif 'uniqueid' not in info or 'tmdb' not in info['uniqueid']:
+                tmdb_id = get_tmdb_id_for_movie(info)
+                logger.debug("Cannot find uniqueid, trying to find tmdb_id via title")
     return tmdb_id
 
 # Function to get the TMDB ID of a TV show via the TMDB API if the TMDB ID is not available in the info

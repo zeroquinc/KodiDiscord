@@ -13,13 +13,24 @@ Discord Rich Presence for Kodi
 4. Edit `.env` and fill in your TMDB API key
 
 ## ⚙️ Configuration
-1. Edit `config.py` and make the following changes:
-   * Set `IMDB_BUTTON_ENABLED` to either `False` or `True` to enable or disable IMDb buttons (see examples below)
-   * Set `TMDB_BUTTON_ENABLED` to either `False` or `True` to enable or disable TMDb buttons (see examples below)
-   * Set `TIME_REMAINING_RPC_ENABLED` to either `False` or `True` to include the time left in the RPC
-   * Set `DIRECTOR_ENABLED` to either `False` or `True` to include the Directors in the RPC (movies only)
-   * Set `GENRES_ENABLED` to either `False` or `True` to include the Genres (movies only)
-   * **Note: `DIRECTOR_ENABLED` and `GENRES_ENABLED` can't be both True, one has to be False because Discord only allows 2 lines**
+
+Edit `config.py` and make the following changes:
+
+This section contains all the configuration options for the script.
+
+- `TMDB_THUMBNAIL_ENABLED`: Set this to `False` to disable the TMDb poster. Default is `False`.
+- `TIME_REMAINING_RPC_ENABLED`: Set this to `False` to disable the time remaining RPC. Default is `True`.
+
+You can only set **1** of the following to `True`, set the rest to `False`:
+
+- `DIRECTOR_ENABLED`: Set this to `False` to disable the director field. Default is `False`.
+- `GENRES_ENABLED`: Set this to `False` to disable the genres field. Default is `True`.
+
+You can only set **2** of the following to `True`, set the rest to `False`:
+
+- `IMDB_BUTTON_ENABLED`: Set this to `False` to disable the IMDb button. Default is `True`.
+- `TMDB_BUTTON_ENABLED`: Set this to `False` to disable the TMDB button. Default is `False`.
+- `TRAKT_BUTTON_ENABLED`: Set this to `False` to disable the Trakt buttons. Default is `False`.
 
 ## 🎯 Usage
 Run `main.py`

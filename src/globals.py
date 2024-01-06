@@ -12,6 +12,9 @@ client_id = '1190792021263265912'
 # TMDB API key
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
 
+# Trakt API key
+TRAKT_API_KEY = os.getenv('TRAKT_API_KEY')
+
 # Discord Rich Presence
 RPC = Presence(client_id)
 RPC.connect()
