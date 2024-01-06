@@ -2,6 +2,7 @@
 Discord Rich Presence for Kodi
 
 ## 📝 Prerequisites
+* Kodi Nexus 20.0 or higher
 * Python (version 3.x)
 * A TMDB account
 
