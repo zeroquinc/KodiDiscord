@@ -10,7 +10,7 @@ Discord Rich Presence for Kodi
 1. Clone the repository
 2. Install the dependencies from `requirements.txt`
 3. Rename `.env.example` to `.env`
-4. Edit `.env` and fill in your TMDB API key
+4. Optional: Edit `.env` and fill in your TMDB API key & Trakt Client ID
 
 ## ⚙️ Configuration
 
