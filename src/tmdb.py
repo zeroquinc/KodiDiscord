@@ -36,7 +36,7 @@ def get_tmdb_id(info, media_type):
         if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'tmdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
             tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
     # Check if 'uniqueid' and 'tmdb' keys exist in the info
-        elif 'uniqueid' not in info or 'tmdb' not in info['uniqueid']:
+        elif tv_show_id == -1:
             tmdb_id = get_tmdb_id_for_episode(info)
             logger.debug("Cannot find uniqueid, trying to find tmdb_id via showtitle")
     else:
