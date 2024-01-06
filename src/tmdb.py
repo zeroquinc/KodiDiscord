@@ -51,7 +51,6 @@ def get_tmdb_id(info):
             tmdb_id = info['uniqueid']['tmdb']
     return tmdb_id
 
-# Function to get the IMDb ID of a media
 def get_imdb_id(info):
     imdb_id = None
     if info['type'] == 'episode':
@@ -64,8 +63,12 @@ def get_imdb_id(info):
             imdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['imdb']
     elif info['type'] == 'movie':
         # If the media type is a movie, fetch the IMDb ID from the movie details
-        if 'uniqueid' in info and 'imdb' in info['uniqueid']:
-            imdb_id = info['uniqueid']['imdb']
+        movie_id = info['id']
+        movie_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetMovieDetails%22,%22params%22:{{%22movieid%22:{movie_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libMovie%22}}"
+        movie_response = requests.get(movie_url).json()
+        # Check if 'result' key exists in the response
+        if 'result' in movie_response and 'moviedetails' in movie_response['result'] and 'uniqueid' in movie_response['result']['moviedetails'] and 'imdb' in movie_response['result']['moviedetails']['uniqueid']:
+            imdb_id = movie_response['result']['moviedetails']['uniqueid']['imdb']
     return imdb_id
 
 # Function to get the image URL of a media
