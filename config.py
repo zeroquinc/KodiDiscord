@@ -1,3 +1,9 @@
 IMDB_BUTTON_ENABLED = True  # Set this to False to disable the IMDb button
 TIME_REMAINING_RPC_ENABLED = True  # Set this to False to disable the time remaining RPC
-DIRECTOR_ENABLED = True  # Set this to False to disable the director field
+
+"""
+You can only set one of the following to True
+"""
+
+DIRECTOR_ENABLED = False  # Set this to False to disable the director field
+GENRES_ENABLED = True  # Set this to False to disable the genres field

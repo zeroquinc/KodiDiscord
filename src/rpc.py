@@ -4,7 +4,7 @@ from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
 from src.custom_logger import logger
-from config import IMDB_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, DIRECTOR_ENABLED
+from config import IMDB_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, DIRECTOR_ENABLED, GENRES_ENABLED
 from .tmdb import get_tmdb_id, get_media_type, get_image_url, get_imdb_id, get_imdb_url
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
 
@@ -223,10 +223,14 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url):
         rpc_params["start"] = start_time
         rpc_params["end"] = end_time
 
-    if DIRECTOR_ENABLED and 'director' in info and info['director'] is not None:
+    if DIRECTOR_ENABLED and 'director' in info and info['director'] is not None and GENRES_ENABLED is False:
         # Join the elements of the list into a single string
         director = ', '.join(info['director'])
         rpc_params["state"] = f"{director}"
+    
+    if GENRES_ENABLED and 'genre' in info and info['genre'] is not None and DIRECTOR_ENABLED is False:
+        genres = ', '.join(info['genre'])
+        rpc_params["state"] = f"{genres}"
     
     if buttons:
         rpc_params["buttons"] = buttons
