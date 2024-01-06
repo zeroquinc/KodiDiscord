@@ -93,3 +93,9 @@ def get_imdb_url(imdb_id):
         return f"https://www.imdb.com/title/{imdb_id}/"
     else:
         return None
+    
+def get_tmdb_url(tmdb_id, media_type):
+    if tmdb_id is not None:
+        return f"https://www.themoviedb.org/{media_type}/{tmdb_id}"
+    else:
+        return None

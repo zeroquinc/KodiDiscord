@@ -1,4 +1,5 @@
 IMDB_BUTTON_ENABLED = True  # Set this to False to disable the IMDb button
+TMDB_BUTTON_ENABLED = True  # Set this to False to disable the TMDB button
 TIME_REMAINING_RPC_ENABLED = True  # Set this to False to disable the time remaining RPC
 
 """
