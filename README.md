@@ -39,17 +39,31 @@ Discord Rich Presence for Kodi
 ---
 
 ## 📸 Examples
-![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/848cbe27-d508-46c5-93dd-a8b9c72c92a1)
+TV Shows:
 
-![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/e494b101-c764-4901-bd7d-a53aa186b0e4)
+![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/bd290633-6341-4b65-8955-961fa1026db4)
 
-![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/e22e37c0-27a6-429a-a2c4-21e412aad10a)
+![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/0e9417eb-2459-4ce4-aa66-444be0065581)
+
+---
+
+Movies:
+
+![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/6a3f363e-b1c1-4489-898c-6c38a9bcd349)
+
+![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/07cecdf8-9557-470a-8a70-7607493ee85f)
+
+---
+
+No buttons:
+
+![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/c35231b8-31a9-4663-aa84-728430ecb0b3)
 
 ---
 
 # 🔧 Configuration
 
-The file `config.py` contains the configuration for the Discord application. You can customize it according to your needs.
+The file `config.py` contains the configuration for the Discord Rich Presence. You can customize it according to your needs.
 
 ## Discord ID
 
@@ -91,9 +105,13 @@ You can change the following variables if you want to change the texts that are 
 - `EPISODE_LARGE_TEXT`: Change this to your own text if you want to change the hover over text for TV Shows
 - `MOVIE_LARGE_TEXT`: Change this to your own text if you want to change the hover over text for Movies
 
+---
+
 # 💡 Future Ideas
 * Add Music
 * Try to make it a Kodi addon
+
+---
 
 # 📞 Contact
 If you have any questions, please create an issue or add me on Discord 💬
