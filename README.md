@@ -1,6 +1,8 @@
 # 🎬 KodiDiscord 🎮
 Discord Rich Presence for Kodi
 
+---
+
 # 📝 Prerequisites
 * Kodi Nexus 20.0 or higher (19 and lower might not work with thumbnails)
 * Python (version 3.x)
@@ -9,22 +11,32 @@ Discord Rich Presence for Kodi
 * A TMDb account for dynamic images and TMDb button
 * A Trakt account for Trakt button
 
+---
+
 # 🚀 Installation
 1. Clone the repository
 2. Install the dependencies from `requirements.txt`
 3. Rename `.env.example` to `.env`
-4. Optional: Edit `.env` and fill in your TMDB API key & Trakt Client ID
-5. Optional: Edit `config.py` to your liking, see configuration below
+
+## 🚀  Optional
+1. Edit `.env` and fill in your TMDB API key & Trakt Client ID
+2. Edit `config.py` to your liking, see configuration below
+
+---
 
 # 🎯 Usage
 1. Make sure `Allow remote control via HTTP` is enabled in Kodi
 2. Run `main.py`
 3. Profit
 
+---
+
 # 🎞️ Supported Media Types 
 * TV Shows 📺
 * Movies 🎥
 * Live TV (PVR IPTV Simple Client) 📡
+
+---
 
 ## 📸 Examples
 ![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/848cbe27-d508-46c5-93dd-a8b9c72c92a1)
@@ -32,6 +44,8 @@ Discord Rich Presence for Kodi
 ![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/e494b101-c764-4901-bd7d-a53aa186b0e4)
 
 ![image](https://github.com/zeroquinc/KodiDiscord/assets/39315068/e22e37c0-27a6-429a-a2c4-21e412aad10a)
+
+---
 
 # 🔧 Configuration
 
