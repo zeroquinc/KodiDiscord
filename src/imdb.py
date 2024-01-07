@@ -1,3 +1,7 @@
+"""
+This file contains functions to get IMDb information about a media.
+"""
+
 # Function to get the IMDb ID of a media
 def get_imdb_id(info):
     imdb_id = None

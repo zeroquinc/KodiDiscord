@@ -89,8 +89,13 @@ def get_urls(info, media_type):
     tmdb_url = None
     imdb_url = None
     letterboxd_url = None
-    image_url = DEFAULT_POSTER_URL
+    image_url = DEFAULT_POSTER_URL # We set the default poster URL in case we can't get the image URL or if TMDB_THUMBNAIL_ENABLED is False
     
+    """"
+    The following if statements are used to get the URLs for the buttons and thumbnail
+    """
+    
+    # We don't need thumbnail or buttons for channels
     if TMDB_THUMBNAIL_ENABLED and media_type != 'channel':
         tmdb_id_tmdb = get_tmdb_id_tmdb(info, media_type)
         tmdb_url = get_tmdb_url(tmdb_id_tmdb, media_type)
@@ -173,6 +178,7 @@ def calculate_end_time(start_time, length):
 The following functions are used to get the state info and title of a media
 """
 
+# Function to get the state info of a media
 def get_state_info(info):
     if 'season' in info and info['season'] and 'episode' in info and info['episode']:
         season_number = str(info['season']).zfill(2)
@@ -191,15 +197,17 @@ def get_title(info):
         title = 'Unknown'
     return title
 
+# Function to get the director state of a media
 def get_director_state(info):
     director = ', '.join(info['director'])
     return f"{director}"
 
+# Function to get the genres state of a media
 def get_genres_state(info):
     genres = ', '.join(info['genre'])
     return f"{genres}"
 
-
+# Function to create the buttons for a media
 def create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url):
     buttons = []
     if IMDB_BUTTON_ENABLED and imdb_url is not None:
@@ -216,6 +224,7 @@ def create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url):
 
     return buttons
 
+# Function to limit the buttons for a media to 2 because of Discord's Rich Presence limit
 def limit_buttons(buttons):
     buttons.sort(key=len, reverse=True)
     return buttons[:2]

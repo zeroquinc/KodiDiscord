@@ -79,7 +79,8 @@ def get_image_url(tmdb_id, media_type):
         if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
             image_url = f"https://image.tmdb.org/t/p/w185{tmdb_response['poster_path']}"
     return image_url
-    
+
+# Function to get the TMDB URL of a media
 def get_tmdb_url(tmdb_id, media_type):
     if tmdb_id is not None:
         return f"https://www.themoviedb.org/{media_type}/{tmdb_id}"

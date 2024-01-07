@@ -4,6 +4,10 @@ from urllib.parse import quote
 from .custom_logger import logger
 from .globals import TRAKT_API_KEY, TMDB_API_KEY
 
+"""
+This file contains functions to fetch data from the Trakt API.
+"""
+
 
 # Function to get the TMDB ID of a media
 def get_tmdb_id_trakt(info, media_type):
@@ -19,12 +23,14 @@ def get_tmdb_id_trakt(info, media_type):
 
     return tmdb_id
 
+# Function to get the TMDB ID of an episode
 def get_tmdb_id_for_episode(info):
     if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
         return info['uniqueid']['tmdb']
     else:
         return get_tmdb_id_for_episode_via_api(info)
 
+# Function to get the TMDB ID of a movie
 def get_tmdb_id_for_movie(info):
     if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
         return info['uniqueid']['tmdb']
@@ -49,6 +55,7 @@ def get_tmdb_id_for_movie_via_api(info):
         return title_response['results'][0]['id']
     return None
 
+# Function to get the Trakt URL of a media
 def get_trakt_url(tmdb_id, media_type):
     # Define the base URL
     base_url = "https://trakt.tv/"
