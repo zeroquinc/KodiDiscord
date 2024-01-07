@@ -88,7 +88,7 @@ The following functions are used to fetch information from a session
 
 # Function to fetch information from a session
 def fetch_info(session):
-    for i in range(5):  # Retry up to 5 times
+    while True:  # Retry indefinitely
         try:
             # Return the JSON response from the session's INFO_URL
             response = session.get(INFO_URL).json()
@@ -96,11 +96,11 @@ def fetch_info(session):
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
             logger.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
-            time.sleep(2 ** i)  # Exponential backoff
+            time.sleep(2)  # Wait for 2 seconds before the next attempt
 
 # Function to fetch the length of a session
 def fetch_length(session):
-    for i in range(5):  # Retry up to 5 times
+    while True:  # Retry indefinitely
         try:
             # Return the JSON response from the session's LENGTH_URL
             response = session.get(LENGTH_URL).json()
@@ -108,7 +108,7 @@ def fetch_length(session):
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
             logger.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
-            time.sleep(2 ** i)  # Exponential backoff
+            time.sleep(2)  # Wait for 2 seconds before the next attempt
             
 """
 The following functions are used to update the RP with the provided info and length
