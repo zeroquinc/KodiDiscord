@@ -1,6 +1,7 @@
 """
 This file contains all the configuration options for the script.
 """
+
 TMDB_THUMBNAIL_ENABLED = False  # Set this to False to disable the TMDB thumbnail
 TIME_REMAINING_RPC_ENABLED = True  # Set this to False to disable the time remaining RPC
 
@@ -20,7 +21,7 @@ TMDB_BUTTON_ENABLED = False  # Set this to False to disable the TMDB button
 TRAKT_BUTTON_ENABLED = False  # Set this to False to disable the Trakt buttons
 
 """
-Default poster url. This will be used if the movie doesn't have a poster or if you are not using TMDB thumbnails.
+Default poster url. This will be used if the movie or TV show doesn't have a poster or if you are not using TMDb thumbnails.
 """
 
-DEFAULT_POSTER_URL = "https://i.imgur.com/2L0vKdQ.png"
+DEFAULT_POSTER_URL = "https://i.imgur.com/QONOI11.png" # Change this to your own image URL if you want to use a custom image
