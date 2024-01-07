@@ -68,18 +68,6 @@ def get_tmdb_id_for_movie(info):
         return title_response['results'][0]['id']
     return None
 
-# Function to get the IMDb ID of a media
-def get_imdb_id(info, media_type):
-    # If the media type is a channel, return None
-    if media_type == 'channel':
-        return None
-    
-    imdb_id = None
-    # Check if 'uniqueid' and 'imdb' keys exist in the info
-    if 'uniqueid' in info and 'imdb' in info['uniqueid']:
-        imdb_id = info['uniqueid']['imdb']
-    return imdb_id
-
 # Function to get the image URL of a media
 def get_image_url(tmdb_id, media_type):
     # Default image URL
@@ -91,13 +79,6 @@ def get_image_url(tmdb_id, media_type):
         if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
             image_url = f"https://image.tmdb.org/t/p/w185{tmdb_response['poster_path']}"
     return image_url
-
-# Function to get the IMDb URL of a media
-def get_imdb_url(imdb_id):
-    if imdb_id is not None:
-        return f"https://www.imdb.com/title/{imdb_id}/"
-    else:
-        return None
     
 def get_tmdb_url(tmdb_id, media_type):
     if tmdb_id is not None:

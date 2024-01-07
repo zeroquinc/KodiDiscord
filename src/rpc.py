@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 
 from config import IMDB_BUTTON_ENABLED, TMDB_BUTTON_ENABLED, TRAKT_BUTTON_ENABLED, LETTERBOXD_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, TMDB_THUMBNAIL_ENABLED, DIRECTOR_ENABLED, GENRES_ENABLED, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
 from .custom_logger import logger
-from .tmdb import get_tmdb_id_tmdb, get_media_type, get_image_url, get_imdb_id, get_imdb_url, get_tmdb_url
+from .imdb import get_imdb_id, get_imdb_url
+from .tmdb import get_tmdb_id_tmdb, get_media_type, get_image_url, get_tmdb_url
 from .trakt import get_trakt_url, get_tmdb_id_trakt
 from .letterboxd import get_letterboxd_url
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC
@@ -41,31 +42,8 @@ def set_rp(info, length):
     end_time = calculate_end_time(start_time, length)
     media_type = get_media_type(info)
     image_url = get_image_url(info, media_type)
-    # Check configuration options
-    trakt_url = None
-    tmdb_url = None
-    imdb_url = None
-    if TMDB_THUMBNAIL_ENABLED:
-        tmdb_id_tmdb = get_tmdb_id_tmdb(info, media_type)
-        tmdb_url = get_tmdb_url(tmdb_id_tmdb, media_type)
-        image_url = get_image_url(tmdb_id_tmdb, media_type)
-        logger.debug(f"TMDB Thumbnail URL: {image_url}")
-    if IMDB_BUTTON_ENABLED:
-        imdb_id = get_imdb_id(info, media_type)
-        imdb_url = get_imdb_url(imdb_id)
-    if TMDB_BUTTON_ENABLED:
-        tmdb_id = get_tmdb_id_tmdb(info, media_type)
-        tmdb_url = get_tmdb_url(tmdb_id, media_type)
-        logger.debug(f"TMDB Button URL: {tmdb_url}")
-    if TRAKT_BUTTON_ENABLED:
-        tmdb_id_trakt = get_tmdb_id_trakt(info, media_type)
-        trakt_url = get_trakt_url(tmdb_id_trakt, media_type)
-        logger.debug(f"Trakt Button URL: {trakt_url}")
-    if LETTERBOXD_BUTTON_ENABLED:
-        tmdb_id = get_tmdb_id_tmdb(info, media_type)
-        letterboxd_url = get_letterboxd_url(tmdb_id)
-        logger.debug(f"Letterboxd Button URL: {letterboxd_url}")
-
+    trakt_url, tmdb_url, imdb_url, letterboxd_url = get_urls(info, media_type)
+    
     if info['type'] == 'movie':
         # If the media type is a movie, update the RP accordingly
         update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
@@ -86,6 +64,35 @@ def set_rp(info, length):
     # Log the current time and total time for debugging
     logger.debug(f"Current time: {length['time']}")
     logger.debug(f"Total time: {length['totaltime']}")
+
+def get_urls(info, media_type):
+    trakt_url = None
+    tmdb_url = None
+    imdb_url = None
+    letterboxd_url = None
+    
+    if TMDB_THUMBNAIL_ENABLED and media_type != 'channel':
+        tmdb_id_tmdb = get_tmdb_id_tmdb(info, media_type)
+        tmdb_url = get_tmdb_url(tmdb_id_tmdb, media_type)
+        image_url = get_image_url(tmdb_id_tmdb, media_type)
+        logger.debug(f"TMDB Thumbnail URL: {image_url}")
+    if IMDB_BUTTON_ENABLED and media_type != 'channel':
+        imdb_id = get_imdb_id(info)
+        imdb_url = get_imdb_url(imdb_id)
+    if TMDB_BUTTON_ENABLED and media_type != 'channel':
+        tmdb_id = get_tmdb_id_tmdb(info, media_type)
+        tmdb_url = get_tmdb_url(tmdb_id, media_type)
+        logger.debug(f"TMDB Button URL: {tmdb_url}")
+    if TRAKT_BUTTON_ENABLED and media_type != 'channel':
+        tmdb_id_trakt = get_tmdb_id_trakt(info, media_type)
+        trakt_url = get_trakt_url(tmdb_id_trakt, media_type)
+        logger.debug(f"Trakt Button URL: {trakt_url}")
+    if LETTERBOXD_BUTTON_ENABLED and media_type != 'channel':
+        tmdb_id = get_tmdb_id_tmdb(info, media_type)
+        letterboxd_url = get_letterboxd_url(tmdb_id)
+        logger.debug(f"Letterboxd Button URL: {letterboxd_url}")
+    
+    return trakt_url, tmdb_url, imdb_url, letterboxd_url
 
 """
 The following functions are used to fetch information from a session
