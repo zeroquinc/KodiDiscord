@@ -56,7 +56,7 @@ def set_rp(info, length):
     global previous_info, previous_speed
     info = info['result']['item']
     length = length['result']
-    if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
+    if previous_info == info and previous_speed == length['speed'] or info['result'] is None:  # Check if both info and speed are the same as before to prevent unnecessary updates
         return
     start_time = calculate_start_time(length)
     end_time = calculate_end_time(start_time, length)
@@ -104,6 +104,7 @@ def get_urls(info, media_type):
     if IMDB_BUTTON_ENABLED and media_type != 'channel':
         imdb_id = get_imdb_id(info)
         imdb_url = get_imdb_url(imdb_id)
+        logger.debug(f"IMDb Button URL: {imdb_url}")
     if TMDB_BUTTON_ENABLED and media_type != 'channel':
         tmdb_id = get_tmdb_id_tmdb(info, media_type)
         tmdb_url = get_tmdb_url(tmdb_id, media_type)
@@ -216,7 +217,7 @@ def create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url):
     if LETTERBOXD_BUTTON_ENABLED and letterboxd_url is not None:
         buttons.append({"label": "Letterboxd", "url": letterboxd_url})
 
-    if len(buttons) < 2 and TRAKT_BUTTON_ENABLED and tmdb_url is not None:
+    if len(buttons) < 2 and TRAKT_BUTTON_ENABLED and trakt_url is not None:
         buttons.append({"label": "Trakt", "url": trakt_url})
 
     if len(buttons) < 2 and TMDB_BUTTON_ENABLED and tmdb_url is not None:
