@@ -1,7 +1,8 @@
 import requests
 from urllib.parse import quote
 
-from src.custom_logger import logger
+from config import DEFAULT_POSTER_URL
+from .custom_logger import logger
 from .globals import TMDB_API_KEY, port
 
 """
@@ -82,7 +83,7 @@ def get_imdb_id(info, media_type):
 # Function to get the image URL of a media
 def get_image_url(tmdb_id, media_type):
     # Default image URL
-    image_url = "https://i.imgur.com/QONOI11.png"
+    image_url = DEFAULT_POSTER_URL
     if tmdb_id:
         # Fetch the image URL from the TMDB API
         tmdb_url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}"

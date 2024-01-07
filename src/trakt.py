@@ -1,7 +1,7 @@
 import requests
 from urllib.parse import quote
 
-from src.custom_logger import logger
+from .custom_logger import logger
 from .globals import TRAKT_API_KEY, TMDB_API_KEY
 
 

@@ -3,8 +3,8 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
-from src.custom_logger import logger
 from config import IMDB_BUTTON_ENABLED, TMDB_BUTTON_ENABLED, TRAKT_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, TMDB_THUMBNAIL_ENABLED, DIRECTOR_ENABLED, GENRES_ENABLED
+from .custom_logger import logger
 from .tmdb import get_tmdb_id_tmdb, get_media_type, get_image_url, get_imdb_id, get_imdb_url, get_tmdb_url
 from .trakt import get_trakt_url, get_tmdb_id_trakt
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT

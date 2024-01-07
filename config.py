@@ -18,3 +18,9 @@ You can only set 2 of the following to True, set the rest to False
 IMDB_BUTTON_ENABLED = True  # Set this to False to disable the IMDb button
 TMDB_BUTTON_ENABLED = False  # Set this to False to disable the TMDB button
 TRAKT_BUTTON_ENABLED = False  # Set this to False to disable the Trakt buttons
+
+"""
+Default poster url. This will be used if the movie doesn't have a poster or if you are not using TMDB thumbnails.
+"""
+
+DEFAULT_POSTER_URL = "https://i.imgur.com/2L0vKdQ.png"
