@@ -21,11 +21,14 @@ GENRES_ENABLED = True  # Set this to False to disable the genres field
 
 """
 You can only set 2 of the following to True, set the rest to False
+Except for the Letterboxd button, you can keep it to True if you use it
+You can set everything to True but due to Discord's 2 button limit, the bottom 2 will be removed
 """
 
 IMDB_BUTTON_ENABLED = True  # Set this to False to disable the IMDb button
-TMDB_BUTTON_ENABLED = False  # Set this to False to disable the TMDB button
-TRAKT_BUTTON_ENABLED = False  # Set this to False to disable the Trakt buttons
+TMDB_BUTTON_ENABLED = True  # Set this to False to disable the TMDB button
+TRAKT_BUTTON_ENABLED = True  # Set this to False to disable the Trakt buttons
+LETTERBOXD_BUTTON_ENABLED = True  # Set this to False to disable the Letterboxd button
 
 """
 Default poster url. This will be used if the movie or TV show doesn't have a poster or if you are not using TMDb thumbnails.

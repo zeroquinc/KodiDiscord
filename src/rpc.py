@@ -3,10 +3,11 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
-from config import IMDB_BUTTON_ENABLED, TMDB_BUTTON_ENABLED, TRAKT_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, TMDB_THUMBNAIL_ENABLED, DIRECTOR_ENABLED, GENRES_ENABLED, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
+from config import IMDB_BUTTON_ENABLED, TMDB_BUTTON_ENABLED, TRAKT_BUTTON_ENABLED, LETTERBOXD_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, TMDB_THUMBNAIL_ENABLED, DIRECTOR_ENABLED, GENRES_ENABLED, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
 from .custom_logger import logger
 from .tmdb import get_tmdb_id_tmdb, get_media_type, get_image_url, get_imdb_id, get_imdb_url, get_tmdb_url
 from .trakt import get_trakt_url, get_tmdb_id_trakt
+from .letterboxd import get_letterboxd_url
 from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC
 
 """"
@@ -60,10 +61,14 @@ def set_rp(info, length):
         tmdb_id_trakt = get_tmdb_id_trakt(info, media_type)
         trakt_url = get_trakt_url(tmdb_id_trakt, media_type)
         logger.debug(f"Trakt Button URL: {trakt_url}")
+    if LETTERBOXD_BUTTON_ENABLED:
+        tmdb_id = get_tmdb_id_tmdb(info, media_type)
+        letterboxd_url = get_letterboxd_url(tmdb_id)
+        logger.debug(f"Letterboxd Button URL: {letterboxd_url}")
 
     if info['type'] == 'movie':
         # If the media type is a movie, update the RP accordingly
-        update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url)
+        update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
     elif info['type'] == 'episode':
         # If the media type is an episode, update the RP accordingly
         update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url)
@@ -159,18 +164,47 @@ def get_title(info):
         title = 'Unknown'
     return title
 
+def get_director_state(info):
+    director = ', '.join(info['director'])
+    return f"{director}"
+
+def get_genres_state(info):
+    genres = ', '.join(info['genre'])
+    return f"{genres}"
+
+
+def create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url):
+    buttons = []
+    if IMDB_BUTTON_ENABLED and imdb_url is not None:
+        buttons.append({"label": "IMDb", "url": imdb_url})
+
+    if LETTERBOXD_BUTTON_ENABLED and letterboxd_url is not None:
+        buttons.append({"label": "Letterboxd", "url": letterboxd_url})
+
+    if len(buttons) < 2 and TRAKT_BUTTON_ENABLED and tmdb_url is not None:
+        buttons.append({"label": "Trakt", "url": trakt_url})
+
+    if len(buttons) < 2 and TMDB_BUTTON_ENABLED and tmdb_url is not None:
+        buttons.append({"label": "TMDb", "url": tmdb_url})
+
+    return buttons
+
+def limit_buttons(buttons):
+    buttons.sort(key=len, reverse=True)
+    return buttons[:2]
+
 """
 The following functions check the speed and time of the media and sends the info to the appropriate function
 """
 
 # Function to update the RP for a movie
-def update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url):
+def update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url):
     if length['speed'] == 0:
         # If the movie is paused, update the RP accordingly
-        update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url, trakt_url)
+        update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
     else:
         # If the movie is playing, update the RP accordingly
-        update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url)
+        update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
 
 # Function to update the RP for an episode
 def update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url):
@@ -198,7 +232,7 @@ The following functions update the RP based on the type of media (movie, episode
 """
 
 # Function to update the RP when a movie is paused
-def update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url, trakt_url):
+def update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url):
     logger.info(f"{UPDATED_RPC} - Paused Movie:")
     logger.info(f"{info['title']}")
     
@@ -207,15 +241,8 @@ def update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url, trakt_url):
     if TMDB_THUMBNAIL_ENABLED and image_url is not None:
         large_image = image_url
     
-    buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url is not None:
-        buttons.append({"label": "IMDb", "url": imdb_url})
-        
-    if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDb", "url": tmdb_url})
-        
-    if TRAKT_BUTTON_ENABLED and trakt_url is not None:
-        buttons.append({"label": "Trakt", "url": trakt_url})
+    buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
+    buttons = limit_buttons(buttons)
     
     rpc_params = {
         "details": str(info['title']) + ' (' + str(info['year']) + ')',
@@ -232,7 +259,7 @@ def update_rpc_paused_movie(info, image_url, imdb_url, tmdb_url, trakt_url):
     RPC.update(**rpc_params)
 
 # Function to update the RP when a movie is playing
-def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url):
+def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url):
     logger.info(f"{UPDATED_RPC} - Playing Movie:")
     logger.info(f"{info['title']}")
     
@@ -241,15 +268,8 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tm
     if TMDB_THUMBNAIL_ENABLED and image_url is not None:
         large_image = image_url
     
-    buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url is not None:
-        buttons.append({"label": "IMDb", "url": imdb_url})
-        
-    if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDb", "url": tmdb_url})
-        
-    if TRAKT_BUTTON_ENABLED and trakt_url is not None:
-        buttons.append({"label": "Trakt", "url": trakt_url})
+    buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
+    buttons = limit_buttons(buttons)
     
     rpc_params = {
         "details": str(info['title']) + ' (' + str(info['year']) + ')',
@@ -264,13 +284,10 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tm
         rpc_params["end"] = end_time
 
     if DIRECTOR_ENABLED and 'director' in info and info['director'] is not None and GENRES_ENABLED is False:
-        # Join the elements of the list into a single string
-        director = ', '.join(info['director'])
-        rpc_params["state"] = f"{director}"
+        rpc_params["state"] = get_director_state(info)
     
     if GENRES_ENABLED and 'genre' in info and info['genre'] is not None and DIRECTOR_ENABLED is False:
-        genres = ', '.join(info['genre'])
-        rpc_params["state"] = f"{genres}"
+        rpc_params["state"] = get_genres_state(info)
     
     if buttons:
         rpc_params["buttons"] = buttons
@@ -278,7 +295,7 @@ def update_rpc_playing_movie(info, start_time, end_time, image_url, imdb_url, tm
     RPC.update(**rpc_params)
 
 # Function to update the RP when an episode is paused
-def update_rpc_paused_episode(info, image_url, imdb_url, tmdb_url, trakt_url):
+def update_rpc_paused_episode(info, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url=None):
     state_info = get_state_info(info)
     logger.info(f"{UPDATED_RPC} - Paused Episode:")
     logger.info(f"{info['showtitle']}")
@@ -289,15 +306,8 @@ def update_rpc_paused_episode(info, image_url, imdb_url, tmdb_url, trakt_url):
     if TMDB_THUMBNAIL_ENABLED and image_url is not None:
         large_image = image_url
     
-    buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url is not None:
-        buttons.append({"label": "IMDb", "url": imdb_url})
-        
-    if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDb", "url": tmdb_url})
-        
-    if TRAKT_BUTTON_ENABLED and trakt_url is not None:
-        buttons.append({"label": "Trakt", "url": trakt_url})
+    buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
+    buttons = limit_buttons(buttons)
     
     rpc_params = {
         "state": state_info,
@@ -314,7 +324,7 @@ def update_rpc_paused_episode(info, image_url, imdb_url, tmdb_url, trakt_url):
     RPC.update(**rpc_params)
 
 # Function to update the RP when an episode is playing
-def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url):
+def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url=None):
     state_info = get_state_info(info)
     logger.info(f"{UPDATED_RPC} - Playing Episode:")
     logger.info(f"{info['showtitle']}")
@@ -325,15 +335,8 @@ def update_rpc_playing_episode(info, start_time, end_time, image_url, imdb_url, 
     if TMDB_THUMBNAIL_ENABLED and image_url is not None:
         large_image = image_url
         
-    buttons = []
-    if IMDB_BUTTON_ENABLED and imdb_url is not None:
-        buttons.append({"label": "IMDb", "url": imdb_url})
-        
-    if TMDB_BUTTON_ENABLED and tmdb_url is not None:
-        buttons.append({"label": "TMDb", "url": tmdb_url})
-        
-    if TRAKT_BUTTON_ENABLED and trakt_url is not None:
-        buttons.append({"label": "Trakt", "url": trakt_url})
+    buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
+    buttons = limit_buttons(buttons)
     
     rpc_params = {
         "state": state_info,
