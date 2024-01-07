@@ -17,7 +17,9 @@ Discord Rich Presence for Kodi
 5. Optional: Edit `config.py` to your liking, see configuration below
 
 # 🎯 Usage
-Run `main.py`
+1. Make sure `Allow remote control via HTTP` is enabled in Kodi
+2. Run `main.py`
+3. Profit
 
 # 🎞️ Supported Media Types 
 * TV Shows 📺
