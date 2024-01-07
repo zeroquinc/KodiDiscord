@@ -88,7 +88,7 @@ def get_image_url(tmdb_id, media_type):
         tmdb_url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}"
         tmdb_response = requests.get(tmdb_url).json()
         if 'poster_path' in tmdb_response and tmdb_response['poster_path']:
-            image_url = f"https://image.tmdb.org/t/p/w500{tmdb_response['poster_path']}"
+            image_url = f"https://image.tmdb.org/t/p/w185{tmdb_response['poster_path']}"
     return image_url
 
 # Function to get the IMDb URL of a media
