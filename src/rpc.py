@@ -3,13 +3,33 @@ import requests
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
-from config import IMDB_BUTTON_ENABLED, TMDB_BUTTON_ENABLED, TRAKT_BUTTON_ENABLED, LETTERBOXD_BUTTON_ENABLED, TIME_REMAINING_RPC_ENABLED, TMDB_THUMBNAIL_ENABLED, DIRECTOR_ENABLED, GENRES_ENABLED, LIVETV_LARGE_TEXT, EPISODE_LARGE_TEXT, MOVIE_LARGE_TEXT
+from config import (
+    IMDB_BUTTON_ENABLED, 
+    TMDB_BUTTON_ENABLED, 
+    TRAKT_BUTTON_ENABLED, 
+    LETTERBOXD_BUTTON_ENABLED, 
+    TIME_REMAINING_RPC_ENABLED, 
+    TMDB_THUMBNAIL_ENABLED, 
+    DIRECTOR_ENABLED, 
+    GENRES_ENABLED, 
+    LIVETV_LARGE_TEXT, 
+    EPISODE_LARGE_TEXT, 
+    MOVIE_LARGE_TEXT, 
+    DEFAULT_POSTER_URL
+)
+
+from .globals import (
+    RPC, 
+    INFO_URL, 
+    LENGTH_URL, 
+    UPDATED_RPC
+)
+
 from .custom_logger import logger
 from .imdb import get_imdb_id, get_imdb_url
 from .tmdb import get_tmdb_id_tmdb, get_media_type, get_image_url, get_tmdb_url
 from .trakt import get_trakt_url, get_tmdb_id_trakt
 from .letterboxd import get_letterboxd_url
-from .globals import RPC, INFO_URL, LENGTH_URL, UPDATED_RPC
 
 """"
 The following variables are used to prevent unnecessary updates to the RP
@@ -41,8 +61,7 @@ def set_rp(info, length):
     start_time = calculate_start_time(length)
     end_time = calculate_end_time(start_time, length)
     media_type = get_media_type(info)
-    image_url = get_image_url(info, media_type)
-    trakt_url, tmdb_url, imdb_url, letterboxd_url = get_urls(info, media_type)
+    trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url = get_urls(info, media_type)
     
     if info['type'] == 'movie':
         # If the media type is a movie, update the RP accordingly
@@ -70,6 +89,7 @@ def get_urls(info, media_type):
     tmdb_url = None
     imdb_url = None
     letterboxd_url = None
+    image_url = DEFAULT_POSTER_URL
     
     if TMDB_THUMBNAIL_ENABLED and media_type != 'channel':
         tmdb_id_tmdb = get_tmdb_id_tmdb(info, media_type)
@@ -92,7 +112,7 @@ def get_urls(info, media_type):
         letterboxd_url = get_letterboxd_url(tmdb_id)
         logger.debug(f"Letterboxd Button URL: {letterboxd_url}")
     
-    return trakt_url, tmdb_url, imdb_url, letterboxd_url
+    return trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url
 
 """
 The following functions are used to fetch information from a session
