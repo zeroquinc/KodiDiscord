@@ -1,6 +1,8 @@
 # 🎬 KodiDiscord 🎮
 Discord Rich Presence for Kodi
 
+![T6gJtlM](https://github.com/zeroquinc/KodiDiscord/assets/39315068/ae5557bc-7705-44b2-a9e1-69d02055afa5)
+
 ---
 
 # 📝 Prerequisites
