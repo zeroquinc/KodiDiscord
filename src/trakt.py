@@ -18,9 +18,12 @@ def get_tmdb_id_trakt(info, media_type):
     tmdb_id = None
     if info['type'] == 'episode':
         tmdb_id = get_tmdb_id_for_episode(info)
+        logger.debug("Cannot find uniqueid, trying to find tmdb_id via showtitle")
     elif info['type'] == 'movie':
         tmdb_id = get_tmdb_id_for_movie(info)
+        logger.debug("Cannot find uniqueid, trying to find tmdb_id via title")
 
+    logger.debug(f"TMDB ID: {tmdb_id}")
     return tmdb_id
 
 # Function to get the TMDB ID of an episode
@@ -42,7 +45,9 @@ def get_tmdb_id_for_episode_via_api(info):
     showtitle = quote(info['showtitle'])
     showtitle_url = f"https://api.themoviedb.org/3/search/tv?api_key={TMDB_API_KEY}&query={showtitle}"
     showtitle_response = requests.get(showtitle_url).json()
+    logger.debug(f"TMDB Episode search response: {showtitle_response}")
     if 'results' in showtitle_response and len(showtitle_response['results']) > 0:
+        logger.debug(f"TMDB Episode search results: {showtitle_response['results'][0]['id']}")
         return showtitle_response['results'][0]['id']
     return None
 
@@ -51,7 +56,9 @@ def get_tmdb_id_for_movie_via_api(info):
     title = quote(info['title'])
     title_url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_API_KEY}&query={title}"
     title_response = requests.get(title_url).json()
+    logger.debug(f"TMDB Movie search response: {title_response}")
     if 'results' in title_response and len(title_response['results']) > 0:
+        logger.debug(f"TMDB Movie search results: {title_response['results'][0]['id']}")
         return title_response['results'][0]['id']
     return None
 

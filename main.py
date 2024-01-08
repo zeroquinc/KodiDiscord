@@ -12,16 +12,13 @@ This file contains the main function of the program. Run this to start the progr
 def main():
     try:
         with requests.Session() as session:
-            last_info, last_length = None, None
+            last_data = None
             while True:
-                info = fetch_info(session)
-                length = fetch_length(session)
-                logger.debug(f"Fetched info: {info}")
-                logger.debug(f"Fetched length: {length}")
-                if info is not None and length is not None: # Check if info and length are not None because if they are, it means Kodi is not playing anything
-                    if info != last_info or length != last_length:
-                        update_rp(info, length) # Update the RP if there's new information
-                        last_info, last_length = info, length # Update the last info and length
+                current_data = (fetch_info(session), fetch_length(session))
+                if None not in current_data: # Check if info and length are not None because if they are, it means Kodi is not playing anything
+                    if current_data != last_data:
+                        update_rp(*current_data) # Update the RP if there's new information
+                        last_data = current_data # Update the last info and length
                     else:
                         time.sleep(3)  # Pause for 3 seconds if there's no new information
     except KeyboardInterrupt:

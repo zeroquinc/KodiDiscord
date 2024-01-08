@@ -8,7 +8,8 @@ DISCORD_ID = '1190792021263265912'  # Your Discord ID, you can change this if yo
 """
 Global config variables
 """
-                                    
+
+LOG_LEVEL = 'INFO'  # or 'DEBUG, WARNING, ERROR, CRITICAL'                                   
 TMDB_THUMBNAIL_ENABLED = False  # Set this to False to disable the TMDB thumbnail
 TIME_REMAINING_RPC_ENABLED = True  # Set this to False to disable the time remaining RPC
 

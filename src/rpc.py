@@ -1,5 +1,6 @@
 import time
 import requests
+import json
 from pypresence.exceptions import PipeClosed
 from datetime import datetime, timedelta
 
@@ -40,12 +41,8 @@ result = None
 previous_info = None
 session = requests.Session()
 
-# Create dictionaries for caching
-tmdb_id_cache = {}
-imdb_id_cache = {}
-media_type_cache = {}
-image_url_cache = {}
-imdb_url_cache = {}
+# Initialize the cache
+cache = {}
 
 """"
 The following functions are used to update the RP
@@ -53,16 +50,48 @@ The following functions are used to update the RP
 
 # Function to set the RP with the provided info and length
 def set_rp(info, length):
-    global previous_info, previous_speed
-    info = info['result']['item']
-    length = length['result']
-    if previous_info == info and previous_speed == length['speed'] or info['result'] is None:  # Check if both info and speed are the same as before to prevent unnecessary updates
+    global previous_info, previous_speed, cache
+    # Check if 'result' and 'item' keys exist in the info and 'result' and 'speed' keys exist in the length to prevent errors
+    if 'result' in info and 'item' in info['result']:
+        info = info['result']['item']
+    else:
+        logger.error("Key 'result' or 'item' not found in info")
         return
+    if 'result' in length and 'speed' in length['result']:
+        length = length['result']
+    else:
+        logger.error("Key 'result' or 'speed' not found in length")
+        return
+    if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
+        return
+
+    # Create a key for the cache
+    cache_key = json.dumps(info, sort_keys=True)
+
+    # If the key is in the cache, use the cached values
+    if cache_key in cache:
+        media_type, urls = cache[cache_key]
+        trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url = urls
+        logger.debug(f"Retrieved cached values for {cache_key}: media_type={media_type}, urls={urls}")
+    else:
+        # Otherwise, calculate the values and store them in the cache
+        media_type = get_media_type(info)
+        urls = get_urls(info, media_type)
+        trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url = urls
+
+        cache[cache_key] = (media_type, urls)
+        logger.debug(f"Cached values for {cache_key}: media_type={media_type}, urls={urls}")
+
+    # Calculate start_time and end_time outside the cache check, as they are not being cached
     start_time = calculate_start_time(length)
     end_time = calculate_end_time(start_time, length)
-    media_type = get_media_type(info)
-    trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url = get_urls(info, media_type)
-    
+
+    update_rpc_mediatype(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
+
+    previous_info = info
+    previous_speed = length['speed']
+
+def update_rpc_mediatype(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url):
     if info['type'] == 'movie':
         # If the media type is a movie, update the RP accordingly
         update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
@@ -76,13 +105,11 @@ def set_rp(info, length):
         # If nothing is playing, log an info message and clear the RP
         logger.info("Nothing is playing. Clearing RPC...")
         RPC.clear()
+    elif info['type'] == 'unknown' and length['speed'] != 0:
+        # If something is playing but the media type is unknown, log an info message and clear the RP
+        logger.info("Something is playing but the media type is unknown. Clearing RPC...")
+        RPC.clear()
 
-    previous_info = info
-    previous_speed = length['speed']
-    
-    # Log the current time and total time for debugging
-    logger.debug(f"Current time: {length['time']}")
-    logger.debug(f"Total time: {length['totaltime']}")
 
 def get_urls(info, media_type):
     trakt_url = None
@@ -100,23 +127,18 @@ def get_urls(info, media_type):
         tmdb_id_tmdb = get_tmdb_id_tmdb(info, media_type)
         tmdb_url = get_tmdb_url(tmdb_id_tmdb, media_type)
         image_url = get_image_url(tmdb_id_tmdb, media_type)
-        logger.debug(f"TMDB Thumbnail URL: {image_url}")
     if IMDB_BUTTON_ENABLED and media_type != 'channel':
         imdb_id = get_imdb_id(info)
         imdb_url = get_imdb_url(imdb_id)
-        logger.debug(f"IMDb Button URL: {imdb_url}")
     if TMDB_BUTTON_ENABLED and media_type != 'channel':
         tmdb_id = get_tmdb_id_tmdb(info, media_type)
         tmdb_url = get_tmdb_url(tmdb_id, media_type)
-        logger.debug(f"TMDB Button URL: {tmdb_url}")
     if TRAKT_BUTTON_ENABLED and media_type != 'channel':
         tmdb_id_trakt = get_tmdb_id_trakt(info, media_type)
         trakt_url = get_trakt_url(tmdb_id_trakt, media_type)
-        logger.debug(f"Trakt Button URL: {trakt_url}")
     if LETTERBOXD_BUTTON_ENABLED and media_type != 'channel':
         tmdb_id = get_tmdb_id_tmdb(info, media_type)
         letterboxd_url = get_letterboxd_url(tmdb_id)
-        logger.debug(f"Letterboxd Button URL: {letterboxd_url}")
     
     return trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url
 
