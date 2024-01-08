@@ -65,11 +65,12 @@ No buttons:
 
 The file `config.py` contains the configuration for the Discord Rich Presence. You can customize it according to your needs.
 
-## Discord ID
+## Globals
 
 Change the `DISCORD_ID` to your own Discord ID if you want to use your own Discord application. Make sure to upload images as "play" and "pause" in the Rich Presence tab of your Discord application.
 
 - `DISCORD_ID`
+- `LOG_LEVEL`: Set this to either INFO or DEBUG, CRITICAL, WARNING etc
 
 ## Global Config Variables
 
@@ -85,9 +86,11 @@ You can only set 1 of the following to True, set the other to False:
 
 ## Buttons
 
-- You can only set 2 of the following to True, set the rest to False
-- Except for the Letterboxd button, you can keep it to True if you use it
-- You can set everything to True but due to Discord's 2 button limit, the bottom 2 will be removed
+```
+You can only set 2 of the following to True, set the rest to False
+Except for the Letterboxd button, you can keep it to True if you use it
+You can set everything to True but due to Discord's 2 button limit, the bottom 2 will be removed
+```
 
 - `IMDB_BUTTON_ENABLED`: Set this to False to disable the IMDb button in the RPC
 - `TMDB_BUTTON_ENABLED`: Set this to False to disable the TMDB button in the RPC
