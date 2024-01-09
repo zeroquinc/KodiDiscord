@@ -17,42 +17,27 @@ def get_tmdb_id_trakt(info, media_type):
 
     tmdb_id = None
     if info['type'] == 'episode':
-        tv_show_id = info['tvshowid']
-        # If tvshowid is not None or -1, fetch the TMDB ID from the TV show details
-        tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
-        tv_show_response = requests.get(tv_show_url).json()
-        logger.debug(f"TMDB Show search response: {tv_show_response}")
-        # Check if 'result' key exists in the response
-        if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'tmdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
-            tmdb_id = tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
-            logger.debug("Found uniqueid in tvshowdetails")
-    # Check if 'uniqueid' and 'tmdb' keys exist in the info
-        elif tv_show_id == -1:
-            tmdb_id = get_tmdb_id_for_episode(info)
-            logger.debug("Cannot find uniqueid, trying to find tmdb_id via showtitle")
-    else:
-        if info['type'] == 'movie':
-            if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
-                tmdb_id = info['uniqueid']['tmdb']
-                logger.debug("Found uniqueid in info")
-            elif 'uniqueid' not in info or 'tmdb' not in info['uniqueid']:
-                tmdb_id = get_tmdb_id_for_movie(info)
-                logger.debug("Cannot find uniqueid, trying to find tmdb_id via title")
+        tmdb_id = get_tmdb_id_for_episode(info)
+    elif info['type'] == 'movie':
+        tmdb_id = get_tmdb_id_for_movie(info)
+
     logger.debug(f"TMDB ID: {tmdb_id}")
     return tmdb_id
 
-# Function to get the TMDB ID of an episode
 def get_tmdb_id_for_episode(info):
     if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
+        logger.debug("Found uniqueid in info")
         return info['uniqueid']['tmdb']
     else:
+        logger.debug("Can't find TMDB ID in uniqueid, searching via API")
         return get_tmdb_id_for_episode_via_api(info)
 
-# Function to get the TMDB ID of a movie
 def get_tmdb_id_for_movie(info):
     if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
+        logger.debug("Found uniqueid in info")
         return info['uniqueid']['tmdb']
     else:
+        logger.debug("Can't find TMDB ID in uniqueid, searching via API")
         return get_tmdb_id_for_movie_via_api(info)
 
 # Function to get the TMDB ID of a TV show via the TMDB API if the TMDB ID is not available in the info
