@@ -137,7 +137,8 @@ def set_rp(info, length):
 
     previous_info = info
     previous_speed = length['speed']
-
+    
+# Function to update the RP based on the media type
 def update_rpc_mediatype(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url):
     media_type_functions = {
         'movie': update_rpc_movie,
@@ -153,6 +154,7 @@ def update_rpc_mediatype(info, length, start_time, end_time, image_url, imdb_url
         logger.info("Media type is not recognized. Clearing RPC...")
         RPC.clear()
 
+# Function to clear the RP if nothing is playing or if the media type is unknown
 def clear_rpc_if_unknown(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url):
     if length['speed'] == 0:
         # If nothing is playing, log an info message and clear the RP
@@ -255,6 +257,7 @@ def create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url):
 
     return limit_buttons(buttons)
 
+# Function to get the URLs for a media
 def get_urls(info, media_type):
     trakt_url = None
     tmdb_url = None
