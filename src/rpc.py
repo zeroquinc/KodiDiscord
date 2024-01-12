@@ -185,14 +185,12 @@ def update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_
     logger.info(f"{UPDATED_RPC} - {'Playing' if is_playing else 'Paused'} {media_type.capitalize()}:")
     logger.info(f"{info['title']}")
 
-    large_image = image_url if TMDB_THUMBNAIL_ENABLED and image_url is not None else image_url
-
     buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
 
     rpc_params = {
         "details": str(info['title']) + ' (' + str(info['year']) + ')' if media_type == 'movie' else str(info['showtitle']),
         "state": "Playing" if is_playing else "Paused",
-        "large_image": large_image,
+        "large_image": image_url,
         "large_text": large_text_map.get(media_type.lower(), "Default Large Text"),
         "small_image": 'play' if is_playing else 'pause',
         "small_text": 'Playing' if is_playing else 'Paused'
