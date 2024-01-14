@@ -176,7 +176,7 @@ def update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url, 
     update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, None, 'episode', is_playing)
 
 # Function to update the RP for a channel
-def update_rpc_channel(info, length, start_time, end_time, image_url):
+def update_rpc_channel(info, length, start_time, end_time, image_url, *_):
     is_playing = length['speed'] != 0
     update_rpc(info, start_time, end_time, image_url, None, None, None, None, 'channel', is_playing)
 
@@ -188,8 +188,8 @@ def update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_
     buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
 
     rpc_params = {
-        "details": str(info['title']) + ' (' + str(info['year']) + ')' if media_type == 'movie' else str(info['showtitle']),
-        "state": "Playing" if is_playing else "Paused",
+        "details": str(info['label']) if media_type == 'channel' else (str(info['title']) + ' (' + str(info['year']) + ')' if media_type == 'movie' else str(info['showtitle']) if media_type == 'episode' else str(info['title'])),
+        "state": str(info['title']) if media_type == 'channel' else ("Playing" if is_playing else "Paused"),
         "large_image": image_url,
         "large_text": large_text_map.get(media_type.lower(), "Default Large Text"),
         "small_image": 'play' if is_playing else 'pause',
