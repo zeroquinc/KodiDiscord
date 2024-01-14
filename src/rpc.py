@@ -171,7 +171,7 @@ def update_rpc_movie(info, length, start_time, end_time, image_url, imdb_url, tm
     update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url, 'movie', is_playing)
 
 # Function to update the RP for an episode
-def update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url):
+def update_rpc_episode(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url=None):
     is_playing = length['speed'] != 0
     update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, None, 'episode', is_playing)
 
