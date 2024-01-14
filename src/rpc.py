@@ -199,7 +199,7 @@ def update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_
     if buttons:
         rpc_params["buttons"] = buttons
 
-    if media_type != 'channel' and TIME_REMAINING_RPC_ENABLED and is_playing:
+    if TIME_REMAINING_RPC_ENABLED and is_playing and start_time is not None and end_time is not None:
         rpc_params["start"] = start_time
         rpc_params["end"] = end_time
 
