@@ -98,6 +98,8 @@ The following functions are used to update the RP
 # Function to set the RP with the provided info and length
 def set_rp(info, length):
     global previous_info, previous_speed, cache
+    # Initialize start_time with a default value
+    start_time, end_time = None, None
     # Check if 'result' and 'item' keys exist in the info and 'result' and 'speed' keys exist in the length to prevent errors
     if 'result' in info and 'item' in info['result']:
         info = info['result']['item']
@@ -129,9 +131,11 @@ def set_rp(info, length):
         cache[cache_key] = (media_type, urls)
         logger.debug(f"Cached values for {cache_key}: media_type={media_type}, urls={urls}")
 
-    # Calculate start_time and end_time outside the cache check, as they are not being cached
-    start_time = calculate_start_time(length)
-    end_time = calculate_end_time(start_time, length)
+    # Calculate start_time and end_time outside the cache check, as they are not being cached, but only if the media is playing
+    if length['speed'] != 0:
+        start_time = calculate_start_time(length)
+        end_time = calculate_end_time(start_time, length)
+        logger.debug(f"Calculated start_time={start_time} and end_time={end_time}")
 
     update_rpc_mediatype(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
 
