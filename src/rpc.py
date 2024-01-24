@@ -103,6 +103,7 @@ def set_rp(info, length):
     # Check if 'result' and 'item' keys exist in the info and 'result' and 'speed' keys exist in the length to prevent errors
     if 'result' in info and 'item' in info['result']:
         info = info['result']['item']
+        logger.debug(f"Retrieved info: {info}")
     else:
         logger.error("Key 'result' or 'item' not found in info")
         return
@@ -275,13 +276,12 @@ def get_urls(info, media_type):
             tmdb_url = get_tmdb_url(tmdb_id, media_type)
             image_url = get_image_url(tmdb_id, media_type)
         if IMDB_BUTTON_ENABLED:
-            imdb_id = get_imdb_id(info)
+            imdb_id = get_imdb_id(info, media_type)
             imdb_url = get_imdb_url(imdb_id)
         if TMDB_BUTTON_ENABLED:
             tmdb_url = get_tmdb_url(tmdb_id, media_type)
         if TRAKT_BUTTON_ENABLED:
-            tmdb_id_trakt = get_tmdb_id_trakt(info, media_type)
-            trakt_url = get_trakt_url(tmdb_id_trakt, media_type)
+            trakt_url = get_trakt_url(tmdb_id, media_type)
         if LETTERBOXD_BUTTON_ENABLED:
             letterboxd_url = get_letterboxd_url(tmdb_id)
     

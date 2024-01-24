@@ -45,7 +45,7 @@ def get_tmdb_id_for_tv_show(info):
 def get_tmdb_id_from_tv_show_details(tv_show_id):
     tv_show_url = f"http://localhost:{port}/jsonrpc?request={{%22jsonrpc%22:%222.0%22,%22method%22:%22VideoLibrary.GetTVShowDetails%22,%22params%22:{{%22tvshowid%22:{tv_show_id},%22properties%22:[%22uniqueid%22]}},%22id%22:%22libTvShow%22}}"
     tv_show_response = requests.get(tv_show_url).json()
-    logger.debug(f"TMDB Show search response: {tv_show_response}")
+    logger.debug(f"Kodi JSONRPC search response: {tv_show_response}")
     # Check if 'result' key exists in the response
     if 'result' in tv_show_response and 'tvshowdetails' in tv_show_response['result'] and 'uniqueid' in tv_show_response['result']['tvshowdetails'] and 'tmdb' in tv_show_response['result']['tvshowdetails']['uniqueid']:
         return tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
@@ -56,7 +56,7 @@ def get_tmdb_id_for_media(info, media_type):
     title = quote(info['showtitle'] if media_type == 'tv' else info['title'])
     title_url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={TMDB_API_KEY}&query={title}"
     title_response = requests.get(title_url).json()
-    logger.debug(f"TMDB {media_type.capitalize()} search response: {title_response}")
+    logger.debug(f"Searching TMDB {media_type.capitalize()} with title: {title}: {title_response}")
     if 'results' in title_response and len(title_response['results']) > 0:
         logger.debug(f"TMDB {media_type.capitalize()} search results: {title_response['results'][0]['id']}")
         return title_response['results'][0]['id']
