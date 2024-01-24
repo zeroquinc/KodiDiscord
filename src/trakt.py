@@ -37,7 +37,7 @@ def get_tmdb_id_for_media_via_api(info, media_type):
     title = quote(info['showtitle'] if media_type == 'episode' else info['title'])
     title_url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={TMDB_API_KEY}&query={title}"
     title_response = requests.get(title_url).json()
-    logger.debug(f"TMDB {media_type.capitalize()} search response: {title_response}")
+    logger.debug(f"Searching TMDB {media_type.capitalize()} with title: {title}: {title_response}")
     if 'results' in title_response and len(title_response['results']) > 0:
         logger.debug(f"TMDB {media_type.capitalize()} search results: {title_response['results'][0]['id']}")
         return title_response['results'][0]['id']
@@ -54,7 +54,7 @@ def get_trakt_url(tmdb_id, media_type):
         search_type = "movie"
     elif media_type == "tv":
         media_url = base_url + "shows/"
-        search_type = "episode"
+        search_type = "show"
     else:
         return None
 
@@ -70,15 +70,8 @@ def get_trakt_url(tmdb_id, media_type):
         data = response.json()
         logger.debug(f"Trakt search response: {data}")
 
-        # Get the Trakt slug from the first result
-        if media_type == "tv":
-            trakt_slug = data[0]["show"]["ids"]["slug"]
-            season = data[0]["episode"]["season"]
-            episode = data[0]["episode"]["number"]
-            trakt_url = f"{media_url}{trakt_slug}/seasons/{season}/episodes/{episode}"
-        else:
-            trakt_slug = data[0][search_type]["ids"]["slug"]
-            trakt_url = media_url + trakt_slug
+        trakt_slug = data[0][search_type]["ids"]["slug"]
+        trakt_url = media_url + trakt_slug
 
         logger.debug(f"Generated Trakt URL: {trakt_url}")
         return trakt_url

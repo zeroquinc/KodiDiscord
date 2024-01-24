@@ -113,7 +113,12 @@ def set_rp(info, length):
         return
     if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
         return
+    if info['type'] == 'unknown':  # Check if the media type is unknown to prevent unnecessary updates
+        clear_rpc_if_unknown(info, length, start_time, end_time, None, None, None, None, None)
+        return
 
+    logger.debug(f"Retrieved info: {info}")
+    
     # Create a key for the cache
     cache_key = json.dumps(info, sort_keys=True)
 
@@ -275,13 +280,12 @@ def get_urls(info, media_type):
             tmdb_url = get_tmdb_url(tmdb_id, media_type)
             image_url = get_image_url(tmdb_id, media_type)
         if IMDB_BUTTON_ENABLED:
-            imdb_id = get_imdb_id(info)
+            imdb_id = get_imdb_id(info, media_type)
             imdb_url = get_imdb_url(imdb_id)
         if TMDB_BUTTON_ENABLED:
             tmdb_url = get_tmdb_url(tmdb_id, media_type)
         if TRAKT_BUTTON_ENABLED:
-            tmdb_id_trakt = get_tmdb_id_trakt(info, media_type)
-            trakt_url = get_trakt_url(tmdb_id_trakt, media_type)
+            trakt_url = get_trakt_url(tmdb_id, media_type)
         if LETTERBOXD_BUTTON_ENABLED:
             letterboxd_url = get_letterboxd_url(tmdb_id)
     
