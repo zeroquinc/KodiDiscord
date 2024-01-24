@@ -103,7 +103,6 @@ def set_rp(info, length):
     # Check if 'result' and 'item' keys exist in the info and 'result' and 'speed' keys exist in the length to prevent errors
     if 'result' in info and 'item' in info['result']:
         info = info['result']['item']
-        logger.debug(f"Retrieved info: {info}")
     else:
         logger.error("Key 'result' or 'item' not found in info")
         return
@@ -114,7 +113,12 @@ def set_rp(info, length):
         return
     if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
         return
+    if info['type'] == 'unknown':  # Check if the media type is unknown to prevent unnecessary updates
+        clear_rpc_if_unknown(info, length, start_time, end_time, None, None, None, None, None)
+        return
 
+    logger.debug(f"Retrieved info: {info}")
+    
     # Create a key for the cache
     cache_key = json.dumps(info, sort_keys=True)
 
