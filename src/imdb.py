@@ -20,7 +20,7 @@ def get_imdb_id(info, media_type):
     if media_type == 'channel':
         return None
 
-    imdb = None
+    imdb_id = None
     if media_type == 'tv':
         imdb_id = get_imdb_id_for_tv_show(info)
     elif media_type == 'movie':
