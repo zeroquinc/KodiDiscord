@@ -24,7 +24,7 @@ def get_imdb_id(info, media_type):
     if media_type == 'tv':
         imdb_id = get_imdb_id_for_tv_show(info)
     elif media_type == 'movie':
-        imdb_id = get_imdb_id_for_movie(info, 'movie')
+        imdb_id = get_imdb_id_for_movie(info)
 
     logger.debug(f"IMDb ID: {imdb_id}")
     return imdb_id
