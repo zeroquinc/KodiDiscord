@@ -113,9 +113,6 @@ def set_rp(info, length):
         return
     if previous_info == info and previous_speed == length['speed']:  # Check if both info and speed are the same as before to prevent unnecessary updates
         return
-    if info['type'] == 'unknown':  # Check if the media type is unknown to prevent unnecessary updates
-        clear_rpc_if_unknown(info, length, start_time, end_time, None, None, None, None, None)
-        return
 
     logger.debug(f"Retrieved info: {info}")
     
@@ -241,7 +238,14 @@ def calculate_start_time(length):
 # Function to calculate the end time of a media
 def calculate_end_time(start_time, length):
     start_time = datetime.fromtimestamp(start_time)
-    return (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
+    end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
+    
+    # If start_time and end_time are the same, fetch length again
+    while start_time == end_time:
+        length = fetch_length()  # Assuming fetch_length() is a function that fetches the length
+        end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
+    
+    return end_time
 
 # Function to create the buttons for a media
 def create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url):

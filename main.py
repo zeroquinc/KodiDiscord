@@ -16,12 +16,13 @@ def main():
             while True:
                 info = fetch_info(session)
                 length = fetch_length(session)
-                if info is not None and length is not None: # Check if info and length are not None because if they are, it means Kodi is not playing anything
-                    if info != last_info or length != last_length:
-                        update_rp(info, length) # Update the RP if there's new information
-                        last_info, last_length = info, length # Update the last info and length
-                    else:
-                        time.sleep(3)  # Pause for 3 seconds if there's no new information
+                if info is None or length is None:  # If either info or length is None, continue to the next iteration
+                    time.sleep(3)
+                    continue
+                if info != last_info or length != last_length:
+                    update_rp(info, length)  # Update the RP if there's new information
+                    last_info, last_length = info, length  # Update the last info and length
+                time.sleep(3)  # Always pause for 3 seconds between iterations
     except KeyboardInterrupt:
         logger.info("Program interrupted by user. Exiting...")
 
