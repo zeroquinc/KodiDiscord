@@ -26,7 +26,7 @@ def get_tmdb_id_tmdb(info, media_type):
     if media_type == 'tv':
         tmdb_id = get_tmdb_id_for_tv_show(info)
     elif media_type == 'movie':
-        tmdb_id = get_tmdb_id_for_media(info, 'movie')
+        tmdb_id = get_tmdb_id_for_media(info)
 
     logger.debug(f"TMDB ID: {tmdb_id}")
     return tmdb_id
@@ -38,7 +38,7 @@ def get_tmdb_id_for_tv_show(info):
     if tv_show_id != -1:
         tmdb_id = get_tmdb_id_from_tv_show_details(tv_show_id)
     else:
-        tmdb_id = get_tmdb_id_for_media(info, 'tv')
+        tmdb_id = None
     return tmdb_id
 
 # Function to get the TMDB ID of a media via the TMDB API if the TMDB ID is not available in the info
@@ -51,16 +51,14 @@ def get_tmdb_id_from_tv_show_details(tv_show_id):
         return tv_show_response['result']['tvshowdetails']['uniqueid']['tmdb']
     return None
 
-# Function to get the TMDB ID of a media via the TMDB API if the TMDB ID is not available in the info
+# Function to fetch the tmdb_id of the media
 def get_tmdb_id_for_media(info, media_type):
-    title = quote(info['showtitle'] if media_type == 'tv' else info['title'])
-    title_url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={TMDB_API_KEY}&query={title}"
-    title_response = requests.get(title_url).json()
-    logger.debug(f"Searching TMDB {media_type.capitalize()} with title: {title}: {title_response}")
-    if 'results' in title_response and len(title_response['results']) > 0:
-        logger.debug(f"TMDB {media_type.capitalize()} search results: {title_response['results'][0]['id']}")
-        return title_response['results'][0]['id']
-    return None
+    if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
+        logger.debug("Found uniqueid in info")
+        return info['uniqueid']['tmdb']
+    else:
+        logger.debug("Can't find TMDB ID in uniqueid")
+        return None
 
 # Function to get the image URL of a media
 def get_image_url(tmdb_id, media_type):

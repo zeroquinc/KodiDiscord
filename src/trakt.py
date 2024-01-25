@@ -29,22 +29,15 @@ def get_tmdb_id_for_media(info, media_type):
         logger.debug("Found uniqueid in info")
         return info['uniqueid']['tmdb']
     else:
-        logger.debug("Can't find TMDB ID in uniqueid, searching via API")
-        return get_tmdb_id_for_media_via_api(info, media_type)
-
-# Function to get the TMDB ID of a media via the TMDB API if the TMDB ID is not available in the info
-def get_tmdb_id_for_media_via_api(info, media_type):
-    title = quote(info['showtitle'] if media_type == 'episode' else info['title'])
-    title_url = f"https://api.themoviedb.org/3/search/{media_type}?api_key={TMDB_API_KEY}&query={title}"
-    title_response = requests.get(title_url).json()
-    logger.debug(f"Searching TMDB {media_type.capitalize()} with title: {title}: {title_response}")
-    if 'results' in title_response and len(title_response['results']) > 0:
-        logger.debug(f"TMDB {media_type.capitalize()} search results: {title_response['results'][0]['id']}")
-        return title_response['results'][0]['id']
-    return None
+        logger.debug("Can't find TMDB ID in uniqueid")
+        return None
 
 # Function to get the Trakt URL of a media
 def get_trakt_url(tmdb_id, media_type):
+        # Return None if tmdb_id is None
+    if tmdb_id is None:
+        return None
+    
     # Define the base URL
     base_url = "https://trakt.tv/"
 
