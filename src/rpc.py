@@ -239,12 +239,6 @@ def calculate_start_time(length):
 def calculate_end_time(start_time, length):
     start_time = datetime.fromtimestamp(start_time)
     end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
-    
-    # If start_time and end_time are the same, fetch length again
-    while start_time == end_time:
-        length = fetch_length()  # Assuming fetch_length() is a function that fetches the length
-        end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
-    
     return end_time
 
 # Function to create the buttons for a media

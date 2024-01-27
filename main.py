@@ -12,16 +12,16 @@ This file contains the main function of the program. Run this to start the progr
 def main():
     try:
         with requests.Session() as session:
-            last_info, last_length = None, None
+            last_info, last_length, last_time = None, None, None
             while True:
                 info = fetch_info(session)
                 length = fetch_length(session)
                 if info is None or length is None:  # If either info or length is None, continue to the next iteration
                     time.sleep(3)
                     continue
-                if info != last_info or length != last_length:
+                if info != last_info or length != last_length or (length['result']['speed'] == 1 and length['result']['time'] == last_time):
                     update_rp(info, length)  # Update the RP if there's new information
-                    last_info, last_length = info, length  # Update the last info and length
+                    last_info, last_length, last_time = info, length, last_time  # Update the last info and length
                 time.sleep(3)  # Always pause for 3 seconds between iterations
     except KeyboardInterrupt:
         logger.info("Program interrupted by user. Exiting...")
