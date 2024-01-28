@@ -115,6 +115,7 @@ def set_rp(info, length):
         return
 
     logger.debug(f"Retrieved info: {info}")
+    logger.debug(f"Retrieved length: {length}")
     
     # Create a key for the cache
     cache_key = json.dumps(info, sort_keys=True)
@@ -136,7 +137,7 @@ def set_rp(info, length):
     # Calculate start_time and end_time outside the cache check, as they are not being cached, but only if the media is playing
     if length['speed'] != 0:
         start_time = calculate_start_time(length)
-        end_time = calculate_end_time(start_time, length)
+        end_time = calculate_end_time(start_time, length, session)
         logger.debug(f"Calculated start_time={start_time} and end_time={end_time}")
 
     update_rpc_mediatype(info, length, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url)
@@ -236,9 +237,16 @@ def calculate_start_time(length):
     return (datetime.now() - timedelta(hours=length["time"]['hours'], minutes=length["time"]['minutes'], seconds=length["time"]['seconds'])).timestamp()
 
 # Function to calculate the end time of a media
-def calculate_end_time(start_time, length):
+def calculate_end_time(start_time, length, session):
     start_time = datetime.fromtimestamp(start_time)
     end_time = (start_time + timedelta(hours=length['totaltime']['hours'], minutes=length['totaltime']['minutes'], seconds=length['totaltime']['seconds'])).timestamp()
+    
+    # Check if start_time and end_time are the same
+    if start_time == end_time:
+        new_length = fetch_info(session)  # Refetch the session
+        new_start_time = calculate_start_time(new_length)  # Recalculate the start time
+        return calculate_end_time(new_start_time, new_length, session)  # Recalculate the end time with the new start time and length
+
     return end_time
 
 # Function to create the buttons for a media
