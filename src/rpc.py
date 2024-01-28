@@ -195,7 +195,7 @@ def update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_
 
     rpc_params = {
         "details": str(info['label']) if media_type == 'channel' else (str(info['title']) + ' (' + str(info['year']) + ')' if media_type == 'movie' else str(info['showtitle']) if media_type == 'episode' else str(info['title'])),
-        "state": str(info['title']) if media_type == 'channel' else ("Playing" if is_playing else "Paused"),
+        "state": str(info['title']) if (media_type == 'channel' and info['title']) else ("Playing" if is_playing else "Paused"),
         "large_image": image_url,
         "large_text": large_text_map.get(media_type.lower(), "Default Large Text"),
         "small_image": 'play' if is_playing else 'pause',
