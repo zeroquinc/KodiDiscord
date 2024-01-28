@@ -52,7 +52,7 @@ def get_tmdb_id_from_tv_show_details(tv_show_id):
     return None
 
 # Function to fetch the tmdb_id of the media
-def get_tmdb_id_for_media(info, media_type):
+def get_tmdb_id_for_media(info):
     if 'uniqueid' in info and 'tmdb' in info['uniqueid']:
         logger.debug("Found uniqueid in info")
         return info['uniqueid']['tmdb']
