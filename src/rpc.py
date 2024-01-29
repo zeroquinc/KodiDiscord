@@ -27,10 +27,10 @@ from .globals import (
 )
 
 from .custom_logger import logger
-from .imdb import get_imdb_id, get_imdb_url
-from .tmdb import get_tmdb_id_tmdb, get_media_type, get_image_url, get_tmdb_url
-from .trakt import get_trakt_url, get_tmdb_id_trakt
-from .letterboxd import get_letterboxd_url
+from .imdb import IMDB
+from .tmdb import TMDB
+from .trakt import Trakt
+from .letterboxd import Letterboxd
 
 """"
 The following variables are used to prevent unnecessary updates to the RP
@@ -109,7 +109,7 @@ class KodiRPC:
             logger.debug(f"Retrieved cached values for {cache_key}: media_type={media_type}, urls={urls}")
         else:
             # Otherwise, calculate the values and store them in the cache
-            media_type = get_media_type(info)
+            media_type = self.get_media_type(info)
             urls = self.get_urls(info, media_type)
             trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url = urls
 
@@ -262,19 +262,19 @@ class KodiRPC:
         
         # We don't need thumbnail or buttons for channels
         if media_type != 'channel':
-            tmdb_id = get_tmdb_id_tmdb(info, media_type)
+            tmdb_id = TMDB.get_tmdb_id_tmdb(info, media_type)
             
             if TMDB_THUMBNAIL_ENABLED:
-                tmdb_url = get_tmdb_url(tmdb_id, media_type)
-                image_url = get_image_url(tmdb_id, media_type)
+                tmdb_url = TMDB.get_tmdb_url(tmdb_id, media_type)
+                image_url = TMDB.get_image_url(tmdb_id, media_type)
             if IMDB_BUTTON_ENABLED:
-                imdb_id = get_imdb_id(info, media_type)
-                imdb_url = get_imdb_url(imdb_id)
+                imdb_id = IMDB.get_imdb_id(info, media_type)
+                imdb_url = IMDB.get_imdb_url(imdb_id)
             if TMDB_BUTTON_ENABLED:
-                tmdb_url = get_tmdb_url(tmdb_id, media_type)
+                tmdb_url = TMDB.get_tmdb_url(tmdb_id, media_type)
             if TRAKT_BUTTON_ENABLED:
-                trakt_url = get_trakt_url(tmdb_id, media_type)
+                trakt_url = Trakt.get_trakt_url(tmdb_id, media_type)
             if LETTERBOXD_BUTTON_ENABLED:
-                letterboxd_url = get_letterboxd_url(tmdb_id)
+                letterboxd_url = Letterboxd.get_letterboxd_url(tmdb_id)
         
         return trakt_url, tmdb_url, imdb_url, letterboxd_url, image_url

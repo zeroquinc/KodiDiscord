@@ -1,7 +1,9 @@
 import requests
 import time
 from src.custom_logger import logger
-from src.rpc import fetch_info, fetch_length, update_rp
+from src.rpc import KodiRPC
+
+KodiRPC = KodiRPC()
 
 class KodiMonitor:
     def __init__(self):
@@ -13,13 +15,13 @@ class KodiMonitor:
     def run(self):
         try:
             while True:
-                info = fetch_info(self.session)
-                length = fetch_length(self.session)
+                info = KodiRPC.fetch_info()
+                length = KodiRPC.fetch_length()
                 if info is None or length is None:  # If either info or length is None, continue to the next iteration
                     time.sleep(3)
                     continue
                 if info != self.last_info or length != self.last_length or (length['result']['speed'] == 1 and length['result']['time'] == self.last_time):
-                    update_rp(info, length)  # Update the RP if there's new information
+                    KodiRPC.update_rp(self, info, length)  # Update the RP if there's new information
                     self.last_info, self.last_length, self.last_time = info, length, length['result']['time']  # Update the last info and length
                 time.sleep(3)  # Always pause for 3 seconds between iterations
         except KeyboardInterrupt:
