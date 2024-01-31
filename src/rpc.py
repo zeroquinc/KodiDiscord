@@ -84,8 +84,9 @@ def fetch_length(session):
         try:
             # Return the JSON response from the session's LENGTH_URL
             response = session.get(LENGTH_URL).json()
-            # If the response matches the given structure, continue the loop to fetch again
-            if response == {'speed': 1, 'time': {'hours': 0, 'milliseconds': 0, 'minutes': 0, 'seconds': 0}, 'totaltime': {'hours': 0, 'milliseconds': 0, 'minutes': 0, 'seconds': 0}}:
+            # If speed is 1 and all fields in time are 0, continue the loop to fetch again
+            if response['result']['speed'] == 1 and all(value == 0 for value in response['result']['time'].values()):
+                logger.debug("Speed is 1 and all fields in time are 0. Continuing the loop to fetch again...")
                 continue
             return response
         except requests.exceptions.RequestException as e:
