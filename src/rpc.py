@@ -79,12 +79,14 @@ def fetch_info(session):
             logger.error(f"Can't connect to Kodi web interface: {e}. Are you sure it's running? Is the web interface on?")
             time.sleep(2)  # Wait for 2 seconds before the next attempt
 
-# Function to fetch the length of a session
 def fetch_length(session):
     while True:  # Retry indefinitely
         try:
             # Return the JSON response from the session's LENGTH_URL
             response = session.get(LENGTH_URL).json()
+            # If the response matches the given structure, continue the loop to fetch again
+            if response == {'speed': 1, 'time': {'hours': 0, 'milliseconds': 0, 'minutes': 0, 'seconds': 0}, 'totaltime': {'hours': 0, 'milliseconds': 0, 'minutes': 0, 'seconds': 0}}:
+                continue
             return response
         except requests.exceptions.RequestException as e:
             # Log an error message if there's a connection issue and wait for an exponentially increasing amount of time before the next attempt
