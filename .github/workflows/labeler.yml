@@ -1,0 +1,36 @@
+name: Label PRs based on PR title
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  labelPR:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install GitHub CLI
+        run: |
+          curl -OL https://github.com/cli/cli/releases/download/v2.4.0/gh_2.4.0_linux_amd64.deb
+          sudo dpkg -i gh_2.4.0_linux_amd64.deb
+
+      - name: Get PR number
+        id: pr_number
+        run: echo "::set-output name=number::${{ github.event.pull_request.number }}"
+
+      - name: Add label
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ "$PR_TITLE" == fix:* ]]; then
+            gh pr edit ${{ steps.pr_number.outputs.number }} --add-label "fix"
+          elif [[ "$PR_TITLE" == feature:* ]]; then
+            gh pr edit ${{ steps.pr_number.outputs.number }} --add-label "feature"
+          elif [[ "$PR_TITLE" == chore:* ]]; then
+            gh pr edit ${{ steps.pr_number.outputs.number }} --add-label "chore"
+          elif [[ "$PR_TITLE" == enhancement:* ]]; then
+            gh pr edit ${{ steps.pr_number.outputs.number }} --add-label "enhancement"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
