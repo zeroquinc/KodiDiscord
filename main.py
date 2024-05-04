@@ -4,25 +4,29 @@ import time
 from src.custom_logger import logger
 from src.rpc import fetch_info, fetch_length, update_rp
 
-"""
-This file contains the main function of the program. Run this to start the program.
-"""
+def get_session_info(session):
+    return fetch_info(session), fetch_length(session)
 
-# Main function
+def should_update_rp(info, length, last_info, last_length, last_time):
+    return info != last_info or length != last_length or (length['result']['speed'] == 1 and length['result']['time'] != last_time)
+
+def update_and_sleep(info, length, last_info, last_length, last_time):
+    if should_update_rp(info, length, last_info, last_length, last_time):
+        update_rp(info, length)
+        last_info, last_length, last_time = info, length, length['result']['time']
+    time.sleep(3)
+    return last_info, last_length, last_time
+
 def main():
     try:
         with requests.Session() as session:
             last_info, last_length, last_time = None, None, None
             while True:
-                info = fetch_info(session)
-                length = fetch_length(session)
-                if info is None or length is None:  # If either info or length is None, continue to the next iteration
+                info, length = get_session_info(session)
+                if None in (info, length):
                     time.sleep(3)
                     continue
-                if info != last_info or length != last_length or (length['result']['speed'] == 1 and length['result']['time'] == last_time):
-                    update_rp(info, length)  # Update the RP if there's new information
-                    last_info, last_length, last_time = info, length, last_time  # Update the last info and length
-                time.sleep(3)  # Always pause for 3 seconds between iterations
+                last_info, last_length, last_time = update_and_sleep(info, length, last_info, last_length, last_time)
     except KeyboardInterrupt:
         logger.info("Program interrupted by user. Exiting...")
 
