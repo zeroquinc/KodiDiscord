@@ -27,7 +27,7 @@ You can set everything to True but due to Discord's 2 button limit, the bottom 2
 
 IMDB_BUTTON_ENABLED = True  # Set this to False to disable the IMDb button
 TMDB_BUTTON_ENABLED = False  # Set this to False to disable the TMDB button
-TRAKT_BUTTON_ENABLED = False  # Set this to False to disable the Trakt buttons
+TRAKT_BUTTON_ENABLED = True  # Set this to False to disable the Trakt buttons
 LETTERBOXD_BUTTON_ENABLED = False  # Set this to False to disable the Letterboxd button
 
 """
