@@ -22,8 +22,7 @@ from config import (
 from .globals import (
     RPC, 
     INFO_URL, 
-    LENGTH_URL, 
-    UPDATED_RPC
+    LENGTH_URL,
 )
 
 from .custom_logger import logger
@@ -192,7 +191,7 @@ def update_rpc_channel(info, length, start_time, end_time, image_url, *_):
 
 # Function to update the RP
 def update_rpc(info, start_time, end_time, image_url, imdb_url, tmdb_url, trakt_url, letterboxd_url, media_type, is_playing):
-    logger.info(f"{UPDATED_RPC} - {'Playing' if is_playing else 'Paused'} {media_type.capitalize()}:")
+    logger.info(f"Updated RPC - {'Playing' if is_playing else 'Paused'} {media_type.capitalize()}:")
     logger.info(f"{info['title']}")
 
     buttons = create_buttons(imdb_url, letterboxd_url, tmdb_url, trakt_url)
