@@ -1,3 +1,5 @@
+This tool is deprecated, use https://github.com/Hiumee/service.discord.richpresence instead.
+
 # 🎬 KodiDiscord 🎮
 Discord Rich Presence for Kodi
 
